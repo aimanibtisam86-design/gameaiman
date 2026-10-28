@@ -1,0 +1,1138 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Pengembaraan Sang Kancil: Misi Seberang Sungai</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@600;700;800;900&display=swap">
+<style>
+/* Layout: papan permainan kartun 2D bertema hutan tropika Malaysia. Kepala hijau hutan + bar kemajuan, pentas sungai, gelembung dialog, panel krim untuk soalan. Tema tunggal ceria. */
+:root{
+  --forest:#2f7d3a; --forestd:#1f5a29; --leaf:#4caf50; --river:#1e88e5; --sky:#cfeeff;
+  --sun:#ffd23f; --orange:#ff8a1f; --oranged:#e06d00; --brown:#8d5a2b; --rambutan:#e53935;
+  --cream:#fffaf0; --panel:#fffdf7; --ink:#26364d; --muted:#5d6e84; --line:#e7dcc6;
+  --ok:#2e9e4f; --okbg:#e3f7e7; --no:#d0583b; --nobg:#fff0e8; --hint:#fff6d1;
+  --display:"Baloo 2","Trebuchet MS",system-ui,sans-serif;
+  --body:"Nunito","Segoe UI",system-ui,sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.5;
+  background:#bfe6c4 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cg fill='%23a9dbb0'%3E%3Cpath d='M20 30c10-14 30-14 34 0-12 6-24 6-34 0z'/%3E%3Cpath d='M78 86c10-14 30-14 34 0-12 6-24 6-34 0z'/%3E%3C/g%3E%3Ccircle cx='96' cy='22' r='3' fill='%23fff' opacity='.5'/%3E%3Ccircle cx='30' cy='96' r='2.5' fill='%23fff' opacity='.5'/%3E%3C/svg%3E");
+  background-attachment:fixed;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 32px}
+.board{max-width:940px;margin:0 auto;background:var(--cream);border:4px solid var(--ink);border-radius:28px;overflow:hidden;box-shadow:0 10px 0 var(--ink),0 18px 40px rgba(31,90,41,.25)}
+/* kepala */
+header.top{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:10px 14px;background:linear-gradient(180deg,#3a8f45,var(--forest));border-bottom:4px solid var(--ink);position:relative}
+.brand{display:flex;align-items:center;gap:8px;font-family:var(--display);font-weight:800;font-size:1.35rem;line-height:1;color:#fff;text-shadow:0 2px 0 var(--forestd)}
+.brand svg{width:40px;height:40px;flex:0 0 40px;background:var(--sky);border:3px solid var(--ink);border-radius:50%}
+.brand .y{color:var(--sun)} .brand .b{color:#9fdcff}
+.hud{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.pill{display:inline-flex;align-items:center;gap:6px;font-weight:900;font-size:.95rem;padding:4px 12px;border-radius:999px;background:#fff;border:3px solid var(--ink);font-variant-numeric:tabular-nums;color:var(--ink)}
+.pill svg{width:22px;height:22px}
+.pill.now{background:var(--sun)}
+.pill.bump{animation:bump .5s}
+@keyframes bump{40%{transform:scale(1.25) rotate(-3deg)}}
+.lvdots{display:flex;gap:4px;align-items:center}
+.dot{width:28px;height:28px;border-radius:50%;border:3px solid var(--ink);background:#fff;font-family:var(--display);font-weight:800;font-size:.85rem;display:grid;place-items:center;color:var(--ink);transition:background .3s,transform .3s}
+.dot.done{background:var(--sun)}
+.dot.cur{background:var(--orange);color:#fff;transform:scale(1.12)}
+.ibtn{display:inline-flex;align-items:center;gap:6px;min-height:42px;border:3px solid var(--ink);background:#fff;border-radius:14px;padding:4px 10px;font-weight:900;font-size:.85rem;color:var(--ink);box-shadow:0 3px 0 var(--ink);transition:transform .1s}
+.ibtn svg{width:22px;height:22px}
+.ibtn:hover{transform:translateY(-2px)}
+.ibtn:active{transform:translateY(2px);box-shadow:0 1px 0 var(--ink)}
+@media (max-width:560px){.ibtn .lbl{display:none}}
+.progress{height:14px;background:#d8ecd0;border-bottom:4px solid var(--ink)}
+.progress span{display:block;height:100%;width:0;background:repeating-linear-gradient(-45deg,var(--sun) 0 12px,#ffc21a 12px 24px);border-right:3px solid var(--ink);transition:width .7s cubic-bezier(.3,1.2,.5,1)}
+#settings{padding:14px 18px;border-bottom:4px solid var(--ink);background:#fff;display:grid;gap:10px}
+#settings label{display:flex;gap:10px;align-items:center;font-weight:800}
+#settings input[type=checkbox]{width:24px;height:24px;accent-color:var(--orange)}
+select{font:inherit;padding:6px 10px;border-radius:12px;border:3px solid var(--ink);max-width:100%;background:#fff;color:var(--ink)}
+.stagewrap{border-bottom:4px solid var(--ink);background:var(--sky)}
+#stage{display:block;width:100%;height:auto}
+/* dialog */
+.talk{display:flex;gap:12px;align-items:center;padding:10px 16px;border-bottom:4px solid var(--ink);background:linear-gradient(180deg,#f4fbef,#fff)}
+.talk .ava{flex:0 0 70px;width:70px;height:70px;border-radius:50%;border:3px solid var(--ink);background:radial-gradient(circle at 50% 35%,#e8f7ff,#bfe6ff);overflow:hidden;box-shadow:0 3px 0 var(--ink)}
+.talk .ava svg{width:100%;height:100%}
+.talk .bub{position:relative;flex:1;min-width:0;background:var(--hint);border:3px solid var(--ink);border-radius:20px;padding:8px 46px 8px 14px;animation:pop .3s ease-out}
+.talk .bub::before{content:"";position:absolute;left:-13px;top:50%;margin-top:-8px;border:8px solid transparent;border-right-color:var(--ink)}
+.talk .who{font-family:var(--display);font-weight:800;font-size:.85rem;color:var(--oranged);text-transform:uppercase;letter-spacing:.06em;line-height:1.2}
+.talk .say{font-weight:800;font-size:1.08rem;min-height:1.5em}
+.talk .mini{position:absolute;right:8px;top:50%;margin-top:-16px;border:2px solid var(--ink);background:#fff;border-radius:50%;width:32px;height:32px;display:grid;place-items:center;padding:0;color:var(--river)}
+.talk .mini svg{width:17px;height:17px}
+.talk.buaya .bub{background:#e6f6e7}
+.talk.buaya .who{color:var(--forest)}
+main{padding:22px 20px 28px;background:var(--cream)}
+.screen{display:flex;flex-direction:column;gap:16px;animation:enter .45s cubic-bezier(.2,.9,.3,1)}
+@keyframes enter{from{transform:translateY(14px);opacity:0}}
+@keyframes pop{from{transform:scale(.94);opacity:.4}}
+h1,h2,h3{font-family:var(--display);line-height:1.08;margin:0;text-wrap:balance}
+h1{font-size:clamp(2.6rem,9vw,4.2rem);font-weight:800}
+h1 span{display:inline-block;-webkit-text-stroke:2px var(--ink);paint-order:stroke fill;text-shadow:0 4px 0 var(--ink)}
+h1 .g{color:var(--leaf)} h1 .o{color:var(--orange)} h1 .b{color:#36a3f2}
+h2{font-size:clamp(1.7rem,5vw,2.3rem)}
+h3{font-size:1.3rem}
+p{margin:0}
+.eyebrow{font-weight:900;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--forest)}
+.muted{color:var(--muted)}
+.scene{width:100%;max-width:100%;height:auto;border-radius:20px;border:4px solid var(--ink);display:block;background:var(--sky);box-shadow:0 6px 0 var(--ink)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.spread{justify-content:space-between}
+.end{justify-content:flex-end}
+button{font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;font-family:var(--display);font-weight:800;font-size:1.15rem;border:3px solid var(--ink);border-radius:999px;padding:8px 24px;background:var(--orange);color:#fff;box-shadow:0 5px 0 var(--ink);transition:transform .1s,box-shadow .1s,filter .1s;text-shadow:0 1px 0 rgba(0,0,0,.15)}
+.btn svg{width:26px;height:26px;flex:0 0 26px}
+.btn{white-space:nowrap}
+.btn:hover{transform:translateY(-2px);box-shadow:0 7px 0 var(--ink);filter:brightness(1.05)}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
+.btn.alt{background:#fff;color:var(--ink);text-shadow:none}
+.btn.gold{background:var(--sun);color:var(--ink);text-shadow:none}
+.btn.red{background:var(--orange)}
+.btn.big{font-size:1.5rem;padding:12px 36px;min-height:62px}
+.btn.cta{animation:breathe 2.2s ease-in-out infinite}
+@keyframes breathe{50%{transform:scale(1.05)}}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none;box-shadow:0 5px 0 var(--ink);animation:none}
+.sound{display:inline-flex;align-items:center;gap:8px;min-height:48px;border:3px solid var(--ink);background:#e3f2fd;color:var(--ink);font-weight:900;border-radius:999px;padding:6px 18px;box-shadow:0 4px 0 var(--ink);transition:transform .1s}
+.sound svg{width:24px;height:24px;color:var(--river)}
+.sound:hover{transform:translateY(-2px)}
+.sound:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ink)}
+:focus-visible{outline:4px solid var(--orange);outline-offset:3px}
+.hero{display:grid;gap:20px;grid-template-columns:1fr 1.15fr;align-items:center}
+.hero > *{min-width:0}
+@media (max-width:720px){.hero{grid-template-columns:1fr}.hero .scene{order:-1}}
+.cards{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+.card{border:3px solid var(--ink);border-radius:22px;padding:16px;background:#fff;display:flex;flex-direction:column;gap:6px;text-align:left;color:var(--ink);box-shadow:0 5px 0 var(--ink);transition:transform .12s}
+.card:hover{transform:translateY(-3px)}
+.card .ic{width:58px;height:58px;border-radius:16px;border:3px solid var(--ink);background:var(--sky);display:grid;place-items:center}
+.card .ic svg{width:38px;height:38px}
+.card.sel{background:#fff4dc;outline:4px solid var(--orange);outline-offset:-9px}
+.tag{display:inline-flex;align-items:center;gap:6px;align-self:flex-start;font-family:var(--display);font-weight:800;font-size:.95rem;padding:3px 14px;border-radius:999px;background:var(--forest);color:#fff;border:3px solid var(--ink)}
+.qbox{border:3px solid var(--ink);border-radius:24px;padding:20px;display:flex;flex-direction:column;gap:14px;background:var(--panel);box-shadow:0 6px 0 var(--ink)}
+.word{font-family:var(--display);font-weight:800;font-size:clamp(2.8rem,11vw,4.3rem);color:var(--rambutan);line-height:1;-webkit-text-stroke:2px var(--ink);paint-order:stroke fill;text-shadow:0 4px 0 var(--ink);letter-spacing:.01em}
+.sentence{font-family:var(--display);font-weight:700;font-size:clamp(1.35rem,4.6vw,1.9rem);line-height:1.3}
+.opts{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));counter-reset:opt}
+.opt{position:relative;display:flex;align-items:center;gap:12px;min-height:64px;font-family:var(--display);font-weight:800;font-size:1.35rem;padding:10px 44px 10px 12px;border-radius:18px;border:3px solid var(--ink);background:#fff;color:var(--ink);box-shadow:0 5px 0 var(--ink);text-align:left;transition:transform .1s,background .15s}
+.opt::before{counter-increment:opt;content:counter(opt,upper-alpha);flex:0 0 36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--sun);border:3px solid var(--ink);font-size:1rem}
+.opt:hover:not(:disabled){background:#fff4dc;transform:translateY(-3px)}
+.opt:active:not(:disabled){transform:translateY(3px);box-shadow:0 2px 0 var(--ink)}
+.opt.ok{background:var(--okbg);color:#1d7a3a;animation:bump .45s}
+.opt.ok::before{background:var(--ok);color:#fff}
+.opt.ok::after{content:"✓";position:absolute;right:12px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:var(--ok);color:#fff;display:grid;place-items:center;font-size:1rem;border:2px solid var(--ink)}
+.opt.no{background:var(--nobg);color:#a8432b;animation:shake .45s}
+.opt.no::after{content:"✗";position:absolute;right:12px;top:50%;transform:translateY(-50%);width:28px;height:28px;border-radius:50%;background:#f3a58b;color:#fff;display:grid;place-items:center;font-size:.95rem;border:2px solid var(--ink)}
+.opt:disabled{cursor:default}
+.opt:disabled:not(.ok):not(.no){opacity:.6}
+.feedback{display:flex;gap:10px;align-items:flex-start;border:3px solid var(--ink);border-radius:18px;padding:10px 14px;font-weight:800;animation:pop .3s ease-out}
+.feedback::before{flex:0 0 28px;height:28px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--ink);font-size:.95rem;font-weight:900}
+.feedback.ok{background:var(--okbg)} .feedback.ok::before{content:"✓";background:var(--ok);color:#fff}
+.feedback.no{background:var(--nobg)} .feedback.no::before{content:"i";background:#f3a58b;color:#fff}
+.feedback.hint{background:var(--hint)} .feedback.hint::before{content:"?";background:var(--sun);color:var(--ink)}
+.turn{font-family:var(--display);font-weight:800;font-size:1.1rem;color:#fff;background:var(--river);border:3px solid var(--ink);border-radius:999px;padding:2px 16px;align-self:flex-start;box-shadow:0 3px 0 var(--ink)}
+.jeda{display:flex;flex-wrap:wrap;align-items:center;gap:4px;font-family:var(--display);font-weight:700;font-size:clamp(1.3rem,4.4vw,1.75rem)}
+.gap{width:34px;height:48px;border:3px dashed #a9b8c9;border-radius:12px;background:transparent;color:var(--rambutan);font-weight:900;font-size:1.6rem;padding:0;line-height:1;transition:background .15s,transform .1s}
+.gap:hover{border-color:var(--orange);background:#fff4dc;transform:translateY(-2px)}
+.gap.on{border-style:solid;border-color:var(--orange);background:#fff4dc}
+.gap.right{border-style:solid;border-color:var(--ok);background:var(--okbg);color:var(--ok)}
+.gap.wrong{border-style:solid;border-color:var(--no);background:var(--nobg)}
+.rima{display:grid;grid-template-columns:1fr 1fr;gap:14px;position:relative}
+.rima .col{display:flex;flex-direction:column;gap:10px;min-width:0}
+.rbtn{min-height:56px;font-family:var(--display);font-weight:800;font-size:1.35rem;padding:8px;border-radius:18px;border:3px solid var(--ink);background:#fff;color:var(--ink);box-shadow:0 4px 0 var(--ink);transition:transform .12s,background .15s}
+.rbtn:hover:not(:disabled){background:#fff4dc}
+.rbtn.pick{background:var(--sun);transform:translateY(-4px) scale(1.03)}
+.rbtn.done{background:var(--okbg);color:var(--ok);box-shadow:none;transform:translateY(4px)}
+.shake{animation:shake .45s}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-3px)}80%{transform:translateX(3px)}}
+.susun{display:grid;gap:12px;grid-template-columns:repeat(3,minmax(0,1fr))}
+@media (max-width:640px){.susun{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.kad{position:relative;border:3px solid var(--ink);border-radius:20px;background:#fff;padding:8px;display:flex;flex-direction:column;gap:6px;text-align:left;color:var(--ink);box-shadow:0 4px 0 var(--ink);transition:transform .15s,background .15s}
+.kad:hover{transform:translateY(-3px)}
+.kad .scene{border-width:2px;border-radius:14px;box-shadow:none}
+.kad .no{position:absolute;top:2px;left:2px;background:var(--sun);color:var(--ink);border:3px solid var(--ink);font-weight:900;border-radius:999px;width:34px;height:34px;display:grid;place-items:center;font-size:1rem;z-index:1}
+.kad p{font-size:.9rem;font-weight:800;line-height:1.3}
+.kad.pick{transform:translateY(-6px) rotate(-1.5deg);background:var(--hint);outline:4px solid var(--orange);outline-offset:-2px}
+.kad.right{background:var(--okbg)} .kad.right .no{background:var(--ok);color:#fff}
+.kad.wrong{background:var(--nobg)}
+.kad.over{outline:4px dashed var(--river)}
+.medals{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.medal{border:3px solid var(--ink);border-radius:22px;padding:12px;background:#fff;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;box-shadow:0 4px 0 var(--ink);animation:enter .5s both}
+.medal .disc{width:62px;height:62px}
+.st{font-size:1.7rem;letter-spacing:2px;color:var(--sun);-webkit-text-stroke:1.5px var(--ink);line-height:1.1}
+.st .off{color:#ece4d3}
+.trophy{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;border:4px solid var(--ink);border-radius:26px;padding:18px;background:radial-gradient(circle at 15% 50%,#fff3c4,#fffaf0 60%);box-shadow:0 6px 0 var(--ink)}
+.trophy svg{width:120px;height:auto;animation:breathe 2.4s ease-in-out infinite}
+@media (max-width:520px){.trophy{grid-template-columns:1fr;text-align:center;justify-items:center}}
+.total{font-family:var(--display);font-weight:800;font-size:clamp(3rem,11vw,4.6rem);color:var(--rambutan);line-height:1;font-variant-numeric:tabular-nums;-webkit-text-stroke:2px var(--ink);paint-order:stroke fill;text-shadow:0 4px 0 var(--ink)}
+.tone{width:100%;max-width:520px;height:auto}
+.guide table{width:100%;border-collapse:collapse;font-size:.95rem;background:#fff}
+.guide td,.guide th{border:2px solid var(--line);padding:8px;text-align:left;vertical-align:top}
+.guide th{background:#f4f9ef}
+.tablewrap{overflow-x:auto}
+.guide a{color:var(--river);font-weight:900;overflow-wrap:anywhere}
+ul.clean{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:16px;font-weight:800;z-index:30;max-width:90vw;text-align:center;border:3px solid #fff}
+input[type=text]{font:inherit;padding:10px 12px;border-radius:14px;border:3px solid var(--ink);width:100%;min-width:0;background:#fff;color:var(--ink)}
+.grp-inputs{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.grp-inputs label{font-weight:800;display:flex;flex-direction:column;gap:4px}
+.discuss{border:3px dashed var(--ink);border-radius:24px;padding:18px;background:var(--hint)}
+.modal{position:fixed;inset:0;background:rgba(31,58,40,.55);display:grid;place-items:center;z-index:25;padding:16px;animation:fade .3s}
+@keyframes fade{from{opacity:0}}
+.modal .qbox{max-width:440px;width:100%;text-align:center;align-items:center;animation:popin .45s cubic-bezier(.3,1.6,.5,1)}
+.modal .qbox svg.kart{width:150px;height:auto}
+@keyframes popin{from{transform:scale(.6);opacity:0}}
+.intro-art{width:min(260px,70%);height:auto}
+#confetti{position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:40}
+.spark{position:fixed;width:20px;height:20px;margin:-10px 0 0 -10px;pointer-events:none;z-index:45;background:var(--sun);clip-path:polygon(50% 0,61% 38%,100% 50%,61% 62%,50% 100%,39% 62%,0 50%,39% 38%);animation:spark .8s ease-out forwards}
+@keyframes spark{to{transform:translate(var(--dx),var(--dy)) scale(.3) rotate(160deg);opacity:0}}
+/* animasi SVG */
+.bob{animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(3px)}}
+.bobk{animation:bobk 1.8s ease-in-out infinite}
+@keyframes bobk{50%{transform:translateY(-2px)}}
+.drift{animation:drift 70s linear infinite}
+.drift2{animation:drift 95s linear infinite;animation-delay:-40s}
+@keyframes drift{from{transform:translateX(-120px)}to{transform:translateX(680px)}}
+.wave{animation:wave 4s linear infinite}
+@keyframes wave{to{transform:translateX(-48px)}}
+.wave2{animation:wave 6s linear infinite reverse}
+.sway{transform-box:fill-box;transform-origin:50% 100%;animation:sway 3.6s ease-in-out infinite alternate}
+@keyframes sway{from{transform:rotate(-2.5deg)}to{transform:rotate(2.5deg)}}
+.flap{transform-box:fill-box;transform-origin:center;animation:flap .3s ease-in-out infinite alternate}
+@keyframes flap{to{transform:scaleX(.2)}}
+.fly{animation:fly 10s ease-in-out infinite}
+@keyframes fly{25%{transform:translate(28px,-14px)}50%{transform:translate(56px,2px)}75%{transform:translate(24px,12px)}}
+.glow{animation:glow 4s ease-in-out infinite alternate}
+@keyframes glow{to{opacity:.55}}
+#kc{transition:transform .8s cubic-bezier(.34,1.15,.5,1)}
+.leap{animation:leap .8s ease-out}
+@keyframes leap{45%{transform:translateY(-50px) rotate(-8deg)}}
+.hop{animation:hop .55s ease-out}
+@keyframes hop{40%{transform:translateY(-18px)}}
+.kshake{animation:shake .45s}
+.dance{animation:dance .5s ease-in-out infinite alternate}
+@keyframes dance{from{transform:translateY(0) rotate(-7deg)}to{transform:translateY(-14px) rotate(7deg)}}
+.jaw{transform-box:fill-box;transform-origin:0% 100%}
+.snap .jaw{animation:snap .6s}
+@keyframes snap{30%{transform:rotate(-20deg)}60%{transform:rotate(0)}}
+.target .bob{filter:drop-shadow(0 0 5px #ffd23f) drop-shadow(0 0 2px #ffd23f)}
+.spl{transform-box:fill-box;transform-origin:center;animation:spl .7s ease-out forwards}
+@keyframes spl{from{transform:scale(.3);opacity:1}to{transform:scale(1.4);opacity:0}}
+.float{animation:float 1.1s ease-out forwards}
+@keyframes float{to{transform:translateY(-36px);opacity:0}}
+/* peta pengembaraan */
+.mapwrap{border:4px solid var(--ink);border-radius:24px;overflow:hidden;box-shadow:0 6px 0 var(--ink);background:#bfe6c4}
+.mapwrap svg{display:block;width:100%;height:auto}
+.mnode{cursor:default}
+.mnode.cur{cursor:pointer}
+.mnode .ring{transform-box:fill-box;transform-origin:center}
+.mnode.cur .ring{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{transform:scale(1.18);opacity:.5}}
+.mnode.unlocking .body{transform-box:fill-box;transform-origin:center;animation:popin .7s cubic-bezier(.3,1.6,.5,1) .5s both}
+.lockfly{transform-box:fill-box;transform-origin:center;animation:lockfly 1s ease-in .2s forwards}
+@keyframes lockfly{40%{transform:translateY(-8px) rotate(-15deg)}100%{transform:translateY(-60px) rotate(40deg);opacity:0}}
+.seg-draw{stroke-dasharray:300;stroke-dashoffset:300;animation:draw 1s ease-out forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.maplegend{display:flex;flex-wrap:wrap;gap:12px;font-weight:800;font-size:.9rem;color:var(--muted)}
+.maplegend span{display:inline-flex;align-items:center;gap:6px}
+.maplegend i{width:18px;height:18px;border-radius:50%;border:2.5px solid var(--ink);display:inline-block}
+/* lencana & rentak */
+.badge-pop{position:fixed;left:50%;top:calc(16px + env(safe-area-inset-top,0px));transform:translateX(-50%);z-index:50;display:flex;gap:12px;align-items:center;background:#fff;border:4px solid var(--ink);border-radius:22px;padding:10px 18px 10px 10px;box-shadow:0 6px 0 var(--ink);animation:badgein .5s cubic-bezier(.3,1.5,.5,1);max-width:92vw}
+.badge-pop.out{animation:badgeout .4s ease-in forwards}
+@keyframes badgein{from{transform:translate(-50%,-120%)}}
+@keyframes badgeout{to{transform:translate(-50%,-140%);opacity:0}}
+.badge-pop .lbl2{font-weight:900;font-size:.75rem;letter-spacing:.08em;text-transform:uppercase;color:var(--oranged)}
+.badge-pop b{font-family:var(--display);font-size:1.2rem;display:block;line-height:1.1}
+.bdg{width:56px;height:56px;flex:0 0 56px}
+.badges{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(130px,1fr))}
+.badge{border:3px solid var(--ink);border-radius:18px;padding:10px 8px;background:#fff;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;font-size:.85rem}
+.badge b{font-family:var(--display);font-size:1rem;line-height:1.1}
+.badge.lock{background:#f1ede4;opacity:.65}
+.badge.lock .bdg{filter:grayscale(1)}
+.pill.streak{background:#ffe0c2}
+/* laporan */
+.statgrid{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(130px,1fr))}
+.stat{border:3px solid var(--ink);border-radius:18px;background:#fff;padding:10px 12px}
+.stat .n{font-family:var(--display);font-weight:800;font-size:2rem;line-height:1;font-variant-numeric:tabular-nums}
+.stat .t{font-weight:800;font-size:.85rem;color:var(--muted)}
+.rtable{width:100%;border-collapse:collapse;background:#fff;font-size:.95rem}
+.rtable th,.rtable td{border:2px solid var(--line);padding:8px;text-align:left}
+.rtable th{background:#f4f9ef}
+.rtable td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+.meter{height:10px;border-radius:99px;background:#eee6d6;overflow:hidden;min-width:60px}
+.meter span{display:block;height:100%;background:var(--leaf)}
+.resume{border:3px solid var(--ink);border-radius:20px;background:#fff;padding:14px;display:flex;flex-direction:column;gap:10px;box-shadow:0 4px 0 var(--ink)}
+.confirm{border:3px dashed var(--no);border-radius:18px;background:var(--nobg);padding:12px;display:flex;flex-direction:column;gap:10px}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.seg-draw{stroke-dashoffset:0}.lockfly{display:none}}
+</style>
+
+<div class="board">
+  <header class="top">
+    <div class="brand" id="brandArt"></div>
+    <div class="hud">
+      <div class="lvdots" id="lvdots" hidden aria-label="Kemajuan buaya"></div>
+      <span class="pill" id="score" hidden title="Rambutan dikumpul"></span>
+      <span class="pill streak" id="streak" hidden title="Jawapan betul berturut-turut"></span>
+      <span id="chips" class="hud"></span>
+      <button class="ibtn" id="btnAudio" type="button" aria-label="Hidupkan atau matikan bunyi"></button>
+      <button class="ibtn" id="btnSet" type="button" aria-expanded="false"></button>
+      <button class="ibtn" id="btnMenu" type="button" hidden></button>
+    </div>
+  </header>
+  <div class="progress" id="progWrap" hidden><span id="bar"></span></div>
+  <div id="settings" hidden></div>
+  <div class="stagewrap" id="stageWrap" hidden><svg id="stage" viewBox="0 0 600 185" role="img" aria-label="Perjalanan Sang Kancil menyeberang sungai di atas lima ekor buaya"></svg></div>
+  <div class="talk" id="talk" hidden>
+    <div class="ava" id="ava"></div>
+    <div class="bub"><div class="who" id="who"></div><div class="say" id="say"></div>
+      <button class="mini" id="sayBtn" type="button" aria-label="Dengar dialog"></button></div>
+  </div>
+  <main id="app"></main>
+</div>
+<div class="toast" id="toast" hidden></div>
+<canvas id="confetti" aria-hidden="true"></canvas>
+
+<script>
+const $=id=>document.getElementById(id);
+const RM=window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ================= IKON ================= */
+const IC={
+ sound:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.8 6a8.5 8.5 0 0 1 0 12"/></svg>',
+ mute:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z" fill="currentColor"/><path d="M17 9l5 6M22 9l-5 6"/></svg>',
+ gear:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3M5.3 5.3l2.1 2.1M16.6 16.6l2.1 2.1M5.3 18.7l2.1-2.1M16.6 7.4l2.1-2.1"/></svg>',
+ home:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg>',
+ info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6M12 7.5v.5"/></svg>',
+ play:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>',
+ projector:'<svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="6" width="30" height="20" rx="3" fill="#fff" stroke="#26364d" stroke-width="3"/><path d="M11 20l6-7 5 5 4-3 5 5" fill="none" stroke="#4caf50" stroke-width="3" stroke-linejoin="round"/><path d="M20 26v6M13 35h14" stroke="#26364d" stroke-width="3" stroke-linecap="round"/></svg>',
+ group:'<svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="13" cy="14" r="5.5" fill="#ff8a1f" stroke="#26364d" stroke-width="2.5"/><circle cx="27" cy="14" r="5.5" fill="#1e88e5" stroke="#26364d" stroke-width="2.5"/><path d="M4 33c0-6 4-10 9-10s9 4 9 10z" fill="#ff8a1f" stroke="#26364d" stroke-width="2.5"/><path d="M18 33c0-6 4-10 9-10s9 4 9 10z" fill="#1e88e5" stroke="#26364d" stroke-width="2.5"/></svg>'
+};
+const ICON_SOUND=IC.sound;
+
+/* ================= ILUSTRASI ================= */
+let curExpr='normal';
+function kancilFace(e){
+  const blush='<circle cx="33" cy="-13" r="3.2" fill="#ff8a80" opacity=".8"/>';
+  if(e==='happy')return `<path d="M23 -25 q5.5 -7 11 0" stroke="#26364d" stroke-width="2.6" fill="none" stroke-linecap="round"/>${blush}
+   <path d="M37 -12 q5 7 10 -1 z" fill="#7a2a1a" stroke="#7a4219" stroke-width="1.4" stroke-linejoin="round"/><path d="M40 -9 q2.5 2 5 -.5" fill="#ff8a80"/>`;
+  if(e==='think')return `<ellipse cx="28" cy="-25" rx="5.5" ry="6.5" fill="#fff" stroke="#7a4219" stroke-width="1"/><circle cx="30" cy="-28" r="3.4" fill="#26364d"/><circle cx="31.3" cy="-29.6" r="1.2" fill="#fff"/>
+   <path d="M22 -33 q5 -3 10 -1" stroke="#7a4219" stroke-width="2" fill="none" stroke-linecap="round"/>${blush}
+   <path d="M39 -11 h6" stroke="#7a4219" stroke-width="2" stroke-linecap="round"/>
+   <g fill="#fff" stroke="#26364d" stroke-width="1.6"><circle cx="47" cy="-45" r="2.4"/><circle cx="52" cy="-52" r="3.4"/><circle cx="60" cy="-61" r="5"/></g>`;
+  if(e==='shock')return `<ellipse cx="28" cy="-25" rx="6.5" ry="7.5" fill="#fff" stroke="#7a4219" stroke-width="1"/><circle cx="28.5" cy="-24.5" r="2.2" fill="#26364d"/>
+   <path d="M21 -35 q5 -4 11 -2" stroke="#7a4219" stroke-width="2" fill="none" stroke-linecap="round"/>${blush}
+   <ellipse cx="42" cy="-10" rx="2.6" ry="3.2" fill="#7a2a1a"/>
+   <path d="M13 -38 q-3 5 0 7 q3 -2 0 -7z" fill="#8fd3ff" stroke="#26364d" stroke-width="1.2"/>`;
+  if(e==='excited')return `<ellipse cx="28" cy="-25" rx="5.8" ry="6.8" fill="#fff" stroke="#7a4219" stroke-width="1"/><circle cx="29.5" cy="-24" r="3.8" fill="#26364d"/>
+   <path d="M30 -27.5 l.9 1.8 1.9 .3 -1.4 1.3 .3 1.9 -1.7 -.9 -1.7 .9 .3 -1.9 -1.4 -1.3 1.9 -.3z" fill="#ffd23f"/>${blush}
+   <path d="M36 -13 q6 9 12 -1 z" fill="#7a2a1a" stroke="#7a4219" stroke-width="1.4" stroke-linejoin="round"/><path d="M39 -9 q3 2.5 6 -.5" fill="#ff8a80"/>
+   <g fill="#ffd23f" stroke="#26364d" stroke-width="1"><path d="M6 -46 l2 4 4 1 -4 1 -2 4 -2 -4 -4 -1 4 -1z"/><path d="M54 -40 l1.5 3 3 .8 -3 .8 -1.5 3 -1.5 -3 -3 -.8 3 -.8z"/></g>`;
+  return `<ellipse cx="28" cy="-25" rx="5.5" ry="6.5" fill="#fff" stroke="#7a4219" stroke-width="1"/><circle cx="29.5" cy="-24" r="3.6" fill="#26364d"/><circle cx="31" cy="-26" r="1.3" fill="#fff"/>${blush}
+   <path d="M38 -11 q4 3 8 -1" stroke="#7a4219" stroke-width="1.8" fill="none" stroke-linecap="round"/>`;
+}
+function kancilArt(e){return `
+<ellipse cx="0" cy="27" rx="26" ry="4" fill="#1f3a2a" opacity=".18"/>
+<path d="M-24 -4 q-9 -2 -9 -10" stroke="#8d4f22" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="-33" cy="-14" r="3" fill="#fff"/>
+<g fill="#7a4219"><rect x="-17" y="6" width="5" height="19" rx="2.5"/><rect x="-8" y="7" width="5" height="18" rx="2.5"/><rect x="9" y="7" width="5" height="18" rx="2.5"/><rect x="17" y="6" width="5" height="19" rx="2.5"/></g>
+<g fill="#3b2412"><rect x="-17" y="22" width="5" height="4" rx="1.5"/><rect x="-8" y="22" width="5" height="4" rx="1.5"/><rect x="9" y="22" width="5" height="4" rx="1.5"/><rect x="17" y="22" width="5" height="4" rx="1.5"/></g>
+<ellipse cx="0" cy="0" rx="25" ry="14" fill="#c97b3d" stroke="#7a4219" stroke-width="2"/>
+<ellipse cx="2" cy="6" rx="15" ry="6" fill="#f6dcb4"/>
+<ellipse cx="-4" cy="-6" rx="14" ry="4" fill="#d99353" opacity=".7"/>
+<g fill="#f6dcb4"><circle cx="-12" cy="-3" r="1.6"/><circle cx="-5" cy="-1" r="1.4"/><circle cx="2" cy="-3" r="1.5"/><circle cx="-18" cy="1" r="1.3"/></g>
+<path d="M14 -8 L24 -20 L30 -12 L19 0 Z" fill="#c97b3d"/>
+<path d="M20 -12 l6 -6 M22 -8 l6 -5" stroke="#f6dcb4" stroke-width="2.4" stroke-linecap="round"/>
+<ellipse cx="20" cy="-39" rx="4.5" ry="11" fill="#a9622d" stroke="#7a4219" stroke-width="1.5" transform="rotate(-25 20 -39)"/>
+<ellipse cx="20" cy="-38" rx="2" ry="7" fill="#f4a9a0" transform="rotate(-25 20 -38)"/>
+<ellipse cx="32" cy="-40" rx="4.5" ry="11" fill="#a9622d" stroke="#7a4219" stroke-width="1.5" transform="rotate(15 32 -40)"/>
+<ellipse cx="32" cy="-39" rx="2" ry="7" fill="#f4a9a0" transform="rotate(15 32 -39)"/>
+<circle cx="27" cy="-22" r="14" fill="#c97b3d" stroke="#7a4219" stroke-width="2"/>
+<ellipse cx="22" cy="-29" rx="6" ry="3.5" fill="#d99353" opacity=".8"/>
+<ellipse cx="39" cy="-16" rx="9" ry="7" fill="#f6dcb4" stroke="#7a4219" stroke-width="2"/>
+<ellipse cx="46" cy="-18" rx="3" ry="2.4" fill="#3b2412"/><circle cx="45" cy="-19" r=".8" fill="#fff"/>
+${kancilFace(e||'normal')}`}
+function buayaArt(angry){return `
+<path d="M-70 4 q-18 -2 -28 -10 q12 16 32 16 Z" fill="#43a047" stroke="#1b5e20" stroke-width="2"/>
+<ellipse cx="-22" cy="4" rx="50" ry="14" fill="#43a047" stroke="#1b5e20" stroke-width="2"/>
+<ellipse cx="-26" cy="-2" rx="40" ry="6" fill="#5cbf60" opacity=".7"/>
+<g fill="#2e7d32">${[-58,-46,-34,-22,-10,2].map(x=>`<path d="M${x} -8 l5 -8 l5 8 z"/>`).join('')}</g>
+<g fill="#388e3c" opacity=".6"><circle cx="-40" cy="2" r="2.5"/><circle cx="-26" cy="4" r="2"/><circle cx="-12" cy="2" r="2.5"/></g>
+<ellipse cx="-22" cy="12" rx="40" ry="4.5" fill="#c5e8a5"/>
+<path d="M18 8 L66 8 Q72 12 64 16 L22 16 Z" fill="#7cc97f" stroke="#1b5e20" stroke-width="2"/>
+<g class="jaw"><path d="M14 -10 Q40 -16 66 -2 Q72 4 64 8 L16 8 Z" fill="#4caf50" stroke="#1b5e20" stroke-width="2"/>
+<path d="M24 -8 Q42 -11 58 -3" stroke="#81c784" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+<g fill="#fff" stroke="#1b5e20" stroke-width=".6">${[24,32,40,48,56].map(x=>`<path d="M${x} 8 l3 5 l3 -5z"/>`).join('')}</g>
+<circle cx="62" cy="-2" r="1.8" fill="#1b5e20"/></g>
+<circle cx="18" cy="-12" r="9.5" fill="#4caf50" stroke="#1b5e20" stroke-width="2"/>
+<ellipse cx="19" cy="-14" rx="6.2" ry="6.8" fill="#fff"/>
+<circle cx="21" cy="-13" r="3.6" fill="#26364d"/><circle cx="22.5" cy="-15" r="1.3" fill="#fff"/>
+${angry?'<path d="M9 -25 L28 -18" stroke="#1b5e20" stroke-width="4" stroke-linecap="round"/>':'<circle cx="34" cy="0" r="3" fill="#ff8a80" opacity=".5"/>'}
+<path d="M-90 18 q12 -6 24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0" stroke="#d6efff" stroke-width="3" fill="none" stroke-linecap="round"/>`}
+function rambutan(x,y,r){r=r||5;let h='';for(let i=0;i<10;i++){const a=i*Math.PI/5;h+=`M${(x+Math.cos(a)*r).toFixed(1)} ${(y+Math.sin(a)*r).toFixed(1)} L${(x+Math.cos(a)*(r+r*.5)).toFixed(1)} ${(y+Math.sin(a)*(r+r*.5)).toFixed(1)} `}
+  return `<path d="${h}" stroke="#2e7d32" stroke-width="${(r*.28).toFixed(1)}" stroke-linecap="round"/><circle cx="${x}" cy="${y}" r="${r}" fill="#e53935" stroke="#9e1b16" stroke-width="${(r*.2).toFixed(1)}"/><circle cx="${x-r*.35}" cy="${y-r*.35}" r="${r*.28}" fill="#ff9e98"/>`}
+const ICON_R=`<svg viewBox="-12 -12 24 24" aria-hidden="true">${rambutan(0,0,6)}</svg>`;
+function avaK(e){return `<svg viewBox="2 -62 58 58">${kancilArt(e)}</svg>`}
+const AVA={kancil:()=>avaK(curExpr),buaya:()=>`<svg viewBox="-4 -32 80 54">${buayaArt(false)}</svg>`};
+
+/* unsur hutan */
+function bunga(x,y,s){s=s||1;return `<g transform="translate(${x},${y}) scale(${s})">${[0,72,144,216,288].map(a=>`<ellipse cx="0" cy="-7" rx="4.6" ry="7" fill="#e53935" stroke="#26364d" stroke-width="1.2" transform="rotate(${a})"/>`).join('')}<circle r="3" fill="#b71c1c"/><path d="M0 0 l5 -9" stroke="#ffd23f" stroke-width="1.6"/><circle cx="5" cy="-9" r="1.6" fill="#ffd23f"/></g>`}
+function bush(x,y,s,c){s=s||1;c=c||'#3f9a46';return `<g transform="translate(${x},${y}) scale(${s})" ><g class="sway"><circle cx="-12" cy="-6" r="11" fill="${c}" stroke="#26364d" stroke-width="2.4"/><circle cx="10" cy="-7" r="12" fill="${c}" stroke="#26364d" stroke-width="2.4"/><circle cx="0" cy="-14" r="12" fill="${c}" stroke="#26364d" stroke-width="2.4"/><rect x="-22" y="-6" width="44" height="7" fill="${c}"/><circle cx="-3" cy="-17" r="4" fill="#fff" opacity=".25"/></g></g>`}
+function rock(x,y,w,h){return `<ellipse cx="${x}" cy="${y}" rx="${w}" ry="${h}" fill="#9aa9b4" stroke="#26364d" stroke-width="2.2"/><ellipse cx="${x-w*.3}" cy="${y-h*.35}" rx="${w*.35}" ry="${h*.25}" fill="#c7d2da"/>`}
+function fern(x,y,s,flip){s=s||1;return `<g transform="translate(${x},${y}) scale(${flip?-s:s},${s})"><g class="sway">${[[-60,26],[-30,30],[0,32],[30,28]].map(([a,l])=>`<path d="M0 0 q${(l*.3).toFixed(1)} -${l*.6} ${(Math.sin(a*Math.PI/180)*l).toFixed(1)} -${(Math.cos(a*Math.PI/180)*l).toFixed(1)}" stroke="#2e7d32" stroke-width="5" fill="none" stroke-linecap="round"/>`).join('')}</g></g>`}
+function pisang(x,y,s,flip){s=s||1;return `<g transform="translate(${x},${y}) scale(${flip?-s:s},${s})"><path d="M-3 0 q-2 -40 4 -70 l6 0 q-4 30 -2 70z" fill="#7a9a3a" stroke="#26364d" stroke-width="2.4"/>
+ <g class="sway"><path d="M2 -68 q-40 -30 -70 -6 q30 10 70 6z" fill="#4caf50" stroke="#26364d" stroke-width="2.4"/><path d="M2 -68 l-60 -6" stroke="#2e7d32" stroke-width="2"/>
+ <path d="M4 -70 q30 -40 66 -24 q-30 16 -66 24z" fill="#5cbf60" stroke="#26364d" stroke-width="2.4"/><path d="M4 -70 l58 -22" stroke="#2e7d32" stroke-width="2"/>
+ <path d="M3 -70 q-6 -40 10 -62 q8 30 -10 62z" fill="#66bb6a" stroke="#26364d" stroke-width="2.4"/></g></g>`}
+function butterfly(x,y,c,d){return `<g transform="translate(${x},${y})"><g class="fly" style="animation-delay:${d||0}s"><g class="flap"><ellipse cx="-5" cy="-3" rx="5" ry="6" fill="${c}" stroke="#26364d" stroke-width="1.2"/><ellipse cx="5" cy="-3" rx="5" ry="6" fill="${c}" stroke="#26364d" stroke-width="1.2"/><ellipse cx="-4" cy="4" rx="3.5" ry="4" fill="${c}" stroke="#26364d" stroke-width="1.2"/><ellipse cx="4" cy="4" rx="3.5" ry="4" fill="${c}" stroke="#26364d" stroke-width="1.2"/></g><rect x="-1" y="-6" width="2" height="12" rx="1" fill="#26364d"/></g></g>`}
+function canopy(y,c,step,amp,seed,H){let d=`M0 ${H} L0 ${y}`;let x=0,i=seed;while(x<600){const r=step+(i%3)*amp;d+=` a${r} ${r*.9} 0 0 1 ${r*1.6} 0`;x+=r*1.6;i++}return `<path d="${d} L600 ${H} Z" fill="${c}"/>`}
+function cloud(tx,ty,s,cls){return `<g class="${cls}"><g transform="translate(${tx} ${ty}) scale(${s})"><path d="M0 30 a12 12 0 0 1 22 -8 a16 16 0 0 1 28 3 a11 11 0 0 1 6 20 h-52 a11 11 0 0 1 -4 -15z" fill="#fff" stroke="#c6e6fb" stroke-width="2"/></g></g>`}
+function birds(x,y){return `<path d="M${x} ${y} q5 -5 10 0 q5 -5 10 0 M${x+26} ${y+12} q4 -4 8 0 q4 -4 8 0" stroke="#26364d" stroke-width="2.2" fill="none" stroke-linecap="round"/>`}
+
+function K(x,y,s,flip,e){return `<g transform="translate(${x},${y}) scale(${flip?-s:s},${s})"><g class="bobk">${kancilArt(e)}</g></g>`}
+function C(x,y,s,angry,cls){return `<g transform="translate(${x},${y}) scale(${s})" class="${cls||''}"><g class="bob">${buayaArt(angry)}</g></g>`}
+function bub(x,y,w,t,tail){return `<g><rect x="${x}" y="${y+3}" width="${w}" height="42" rx="18" fill="#26364d"/><rect x="${x}" y="${y}" width="${w}" height="42" rx="18" fill="#fff" stroke="#26364d" stroke-width="3"/>
+<path d="M${x+(tail==='r'?w-34:22)} ${y+40} l${tail==='r'?14:-4} 16 l12 -16" fill="#fff" stroke="#26364d" stroke-width="3" stroke-linejoin="round"/>
+<rect x="${x+(tail==='r'?w-36:20)}" y="${y+36}" width="26" height="5" fill="#fff"/>
+<text x="${x+w/2}" y="${y+29}" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="21" fill="#26364d">${t}</text></g>`}
+function bigTree(x){let r='';[[-30,-20],[-8,-34],[18,-24],[34,-6],[-36,4],[-14,-8],[10,-2],[26,12],[-22,18],[2,20],[-44,-10],[40,-22]].forEach(p=>r+=rambutan(x+p[0],120+p[1],5.5));
+  return `<path d="M${x-9} 200 Q${x-4} 160 ${x-6} 120 L${x+6} 120 Q${x+4} 160 ${x+10} 200Z" fill="#8d5a2b" stroke="#26364d" stroke-width="3"/><path d="M${x-2} 190 q2 -20 0 -40" stroke="#6d4524" stroke-width="2" fill="none"/>
+  <g class="sway"><circle cx="${x}" cy="105" r="46" fill="#2e7d32" stroke="#26364d" stroke-width="3"/><circle cx="${x-38}" cy="128" r="28" fill="#2e7d32" stroke="#26364d" stroke-width="3"/><circle cx="${x+36}" cy="126" r="28" fill="#2e7d32" stroke="#26364d" stroke-width="3"/>
+  <circle cx="${x}" cy="118" r="40" fill="#43a047"/><circle cx="${x-14}" cy="90" r="18" fill="#66bb6a" opacity=".55"/>${r}</g>`}
+function sceneBase(){
+  return `<defs><linearGradient id="skyG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd3ff"/><stop offset="1" stop-color="#e9f8ff"/></linearGradient>
+  <linearGradient id="rivG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4fb3f6"/><stop offset="1" stop-color="#1769c2"/></linearGradient>
+  <radialGradient id="sunG"><stop offset="0" stop-color="#fff7c2"/><stop offset="1" stop-color="#fff7c2" stop-opacity="0"/></radialGradient></defs>
+  <rect width="600" height="300" fill="url(#skyG)"/>
+  <circle class="glow" cx="300" cy="44" r="80" fill="url(#sunG)"/><circle cx="300" cy="44" r="24" fill="#ffd54f" stroke="#26364d" stroke-width="3"/><circle cx="292" cy="38" r="7" fill="#fff3b0"/>
+  ${cloud(80,20,1.1,'drift')}${cloud(380,46,.8,'drift2')}${birds(190,56)}
+  ${canopy(150,'#a5d98f',26,10,0,300)}${canopy(168,'#6cbf5e',22,12,1,300)}
+  <g fill="#5a3a1e" opacity=".55"><rect x="40" y="170" width="8" height="30"/><rect x="250" y="172" width="8" height="28"/><rect x="360" y="168" width="7" height="32"/></g>
+  <rect y="198" width="600" height="102" fill="url(#rivG)"/>
+  <g class="wave" stroke="#cfeaff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".85"><path d="M150 222 q12 -6 24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0"/></g>
+  <g class="wave2" stroke="#9fd2fb" stroke-width="2.5" fill="none" stroke-linecap="round" opacity=".8"><path d="M110 278 q12 -6 24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0"/></g>
+  <path d="M0 194 L182 194 L160 300 L0 300Z" fill="#7cb342" stroke="#26364d" stroke-width="3"/>
+  <path d="M0 194 L182 194 L178 210 L0 210Z" fill="#8bc34a"/>
+  <path d="M418 194 L600 194 L600 300 L440 300Z" fill="#7cb342" stroke="#26364d" stroke-width="3"/>
+  <path d="M418 194 L600 194 L600 210 L422 210Z" fill="#8bc34a"/>
+  ${rock(168,236,16,10)}${rock(150,262,11,7)}${rock(432,240,15,9)}${rock(452,270,10,6)}
+  <path d="M20 194 l4 -10 l4 10 M60 194 l4 -12 l4 12 M120 194 l4 -9 l4 9 M450 194 l4 -10 l4 10 M500 194 l4 -12 l4 12" stroke="#33691e" stroke-width="3" fill="none" stroke-linecap="round"/>
+  ${bigTree(520)}${bunga(30,250,1)}${bunga(132,282,.8)}${bunga(470,262,.9)}${bunga(585,288,.8)}
+  ${butterfly(220,120,'#ffd23f',0)}${butterfly(400,150,'#ff8a80',-4)}`;
+}
+function scene(n,label){
+  const row=C(215,238,.5)+C(298,240,.5)+C(381,238,.5);
+  let c='';
+  if(n===0)c=pisang(40,198,1.1)+K(150,146,2,false,'excited')+C(300,240,.8)+bub(262,70,120,'Jom!','l');
+  if(n===1)c=K(100,161,1.3)+bub(150,58,190,'Rambutan!','l');
+  if(n===2)c=K(105,161,1.3,false,'shock')+C(305,232,.9)+C(395,264,.6)+bub(150,58,220,'Wah, merahnya!','l');
+  if(n===3)c=`<path d="M8 197 Q95 92 186 197 Z" fill="#a1693a" stroke="#26364d" stroke-width="3"/><path d="M60 170 q12 -6 22 2 M110 150 q10 -5 18 2" stroke="#6d4524" stroke-width="3" fill="none"/>`+K(95,116,1.25,false,'think')+C(305,236,.85)+C(390,264,.65)+bub(150,30,240,'Wahai Sang Buaya!','l');
+  if(n===4)c=K(102,161,1.2)+row+bub(150,62,210,'Berbaris semua!','l');
+  if(n===5)c=row+K(290,208,1,false,'happy')+`<path d="M210 196 q40 -60 80 -20" stroke="#26364d" stroke-width="3" fill="none" stroke-dasharray="6 6"/>`+bub(250,96,150,'1, 2, 3!','l');
+  if(n===6)c=K(470,161,1.25,true,'happy')+C(285,234,.9,true)+C(200,264,.6,true)+bub(330,52,170,'Ha ha ha!','r');
+  return `<svg class="scene" viewBox="0 0 600 300" role="img" aria-label="${label||'Ilustrasi cerita'}">${sceneBase()}${c}</svg>`;
+}
+function trophyArt(){return `<svg viewBox="0 0 120 130" aria-hidden="true"><path d="M30 18 h60 v24 a30 30 0 0 1 -60 0z" fill="#ffd23f" stroke="#26364d" stroke-width="4"/>
+ <path d="M30 26 h-14 q0 24 18 26 M90 26 h14 q0 24 -18 26" fill="none" stroke="#26364d" stroke-width="4"/><path d="M40 24 v16 a20 20 0 0 0 8 14" stroke="#fff6b8" stroke-width="5" fill="none" stroke-linecap="round"/>
+ <rect x="52" y="70" width="16" height="18" fill="#ffc21a" stroke="#26364d" stroke-width="4"/><rect x="34" y="88" width="52" height="16" rx="4" fill="#8d5a2b" stroke="#26364d" stroke-width="4"/>
+ <path d="M60 30 l4 8 9 1 -7 6 2 9 -8 -4 -8 4 2 -9 -7 -6 9 -1z" fill="#fff" stroke="#26364d" stroke-width="2"/>
+ <g fill="#ffd23f" stroke="#26364d" stroke-width="1.5"><path d="M12 10 l2 5 5 1 -5 1 -2 5 -2 -5 -5 -1 5 -1z"/><path d="M108 40 l1.6 4 4 1 -4 1 -1.6 4 -1.6 -4 -4 -1 4 -1z"/><path d="M104 6 l1.4 3.4 3.4 .8 -3.4 .8 -1.4 3.4 -1.4 -3.4 -3.4 -.8 3.4 -.8z"/></g></svg>`}
+function medalArt(n){const col=n===3?'#ffd23f':n===2?'#cfd8dc':'#e0a26b';return `<svg class="disc" viewBox="0 0 62 62" aria-hidden="true"><path d="M18 2 l8 20 M44 2 l-8 20" stroke="#e53935" stroke-width="8"/><circle cx="31" cy="38" r="20" fill="${col}" stroke="#26364d" stroke-width="3.5"/><circle cx="31" cy="38" r="13" fill="none" stroke="#fff" stroke-width="2" opacity=".7"/><text x="31" y="45" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="20" fill="#26364d">${n}</text></svg>`}
+
+/* ================= PENTAS PERJALANAN ================= */
+const CX=[145,220,295,370,445];
+const POS=[[45,103],[137,117],[212,117],[287,117],[362,117],[437,117],[528,103]];
+function buildStage(){
+  let tree='';[[-18,-12],[0,-22],[16,-10],[-8,2],[10,6],[-24,6],[24,-24]].forEach(p=>tree+=rambutan(570+p[0],70+p[1],4));
+  curExpr='normal';
+  $('stage').innerHTML=`<defs><linearGradient id="sG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fd3ff"/><stop offset="1" stop-color="#e9f8ff"/></linearGradient>
+  <linearGradient id="rG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4fb3f6"/><stop offset="1" stop-color="#1769c2"/></linearGradient>
+  <radialGradient id="sunG2"><stop offset="0" stop-color="#fff7c2"/><stop offset="1" stop-color="#fff7c2" stop-opacity="0"/></radialGradient></defs>
+  <rect width="600" height="185" fill="url(#sG)"/>
+  <circle class="glow" cx="300" cy="26" r="56" fill="url(#sunG2)"/><circle cx="300" cy="26" r="15" fill="#ffd54f" stroke="#26364d" stroke-width="2.5"/>
+  ${cloud(100,-6,.9,'drift')}${cloud(420,4,.65,'drift2')}${birds(190,30)}
+  ${canopy(80,'#b5e09f',18,7,0,185)}${canopy(94,'#79c66a',15,8,2,185)}
+  <g fill="#5a3a1e" opacity=".5"><rect x="160" y="100" width="5" height="20"/><rect x="330" y="98" width="5" height="22"/><rect x="420" y="102" width="5" height="18"/></g>
+  <rect y="120" width="600" height="65" fill="url(#rG)"/>
+  <g class="wave" stroke="#d6efff" stroke-width="2.5" fill="none" stroke-linecap="round"><path d="M100 160 q12 -6 24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0"/></g>
+  <g class="wave2" stroke="#a8d8fb" stroke-width="2" fill="none" stroke-linecap="round" opacity=".8"><path d="M90 178 q12 -5 24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0"/></g>
+  <path d="M0 118 L104 118 L90 185 L0 185Z" fill="#7cb342" stroke="#26364d" stroke-width="3"/><path d="M0 118 L104 118 L101 128 L0 128Z" fill="#8bc34a"/>
+  <path d="M496 118 L600 118 L600 185 L510 185Z" fill="#7cb342" stroke="#26364d" stroke-width="3"/><path d="M496 118 L600 118 L600 128 L499 128Z" fill="#8bc34a"/>
+  ${rock(100,140,9,6)}${rock(503,142,9,6)}${fern(8,126,.7)}${bunga(84,160,.6)}${bunga(20,170,.55)}${bunga(520,168,.6)}${bush(502,120,.5)}
+  <path d="M572 118 Q570 96 574 72 L580 72 Q584 96 583 118Z" fill="#8d5a2b" stroke="#26364d" stroke-width="2.5"/>
+  <g class="sway"><circle cx="576" cy="62" r="30" fill="#2e7d32" stroke="#26364d" stroke-width="2.5"/><circle cx="576" cy="66" r="25" fill="#43a047"/>${tree}</g>
+  ${CX.map((x,i)=>`<g id="cr${i+1}">${C(x,136,.42)}<g transform="translate(${x-6},170)"><circle r="10.5" fill="#fff" stroke="#26364d" stroke-width="2.5" id="bd${i+1}"/><text id="bt${i+1}" y="5" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="14" fill="#26364d">${i+1}</text></g></g>`).join('')}
+  ${butterfly(250,70,'#ffd23f',0)}${butterfly(460,86,'#ff8a80',-5)}
+  <g id="fx"></g>
+  <g id="kc" style="transform:translate(${POS[0][0]}px,${POS[0][1]}px)"><g id="kci"><g transform="scale(.62)" id="kart">${kancilArt('normal')}</g></g></g>`;
+}
+let exprT=null;
+function setExpr(e,ms){curExpr=e;const a=$('kart');if(a)a.innerHTML=kancilArt(e);clearTimeout(exprT);if(ms)exprT=setTimeout(()=>setExpr('think'),ms)}
+function kAnim(cls,ms){const e=$('kci');if(!e)return;e.classList.remove('leap','hop','kshake');e.getBoundingClientRect();e.classList.add(cls);setTimeout(()=>e.classList.remove(cls),ms||800)}
+function moveKancil(p,animate){S.pos=p;const [x,y]=POS[p];$('kc').style.transform=`translate(${x}px,${y}px)`;if(animate){kAnim('leap');SFX.jump()}}
+function setTarget(i){for(let j=1;j<=5;j++){const g=$('cr'+j);if(g)g.firstElementChild.classList.toggle('target',j===i)}}
+function markDone(i){const b=$('bd'+i),t=$('bt'+i);if(b){b.setAttribute('fill','#ffd23f');t.textContent='★'}}
+function fx(svg,ms){const g=$('fx');if(!g)return;const w=document.createElementNS('http://www.w3.org/2000/svg','g');w.innerHTML=svg;g.appendChild(w);setTimeout(()=>w.remove(),ms||900)}
+function snapCroc(i){const g=$('cr'+i);if(!g)return;const c=g.firstElementChild;c.classList.remove('snap');c.getBoundingClientRect();c.classList.add('snap');setTimeout(()=>c.classList.remove('snap'),700);
+  const x=CX[i-1]+14,y=140;fx(`<g transform="translate(${x},${y})"><g class="spl"><circle r="12" fill="none" stroke="#e3f2fd" stroke-width="3"/>${[0,60,120,180,240,300].map(a=>`<circle cx="${(Math.cos(a*Math.PI/180)*17).toFixed(1)}" cy="${(Math.sin(a*Math.PI/180)*10-5).toFixed(1)}" r="3" fill="#cfeaff"/>`).join('')}</g></g>`)}
+function floatPlus(){const [x,y]=POS[S.pos];fx(`<g transform="translate(${x+14},${y-40})"><g class="float">${rambutan(-12,-6,6)}<text x="0" y="0" font-family="Baloo 2, sans-serif" font-weight="800" font-size="20" fill="#e53935" stroke="#26364d" stroke-width=".8">+1</text></g></g>`,1200)}
+let lastEl=null;
+document.addEventListener('pointerdown',e=>{lastEl=e.target.closest('button')},true);
+document.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')lastEl=document.activeElement},true);
+function sparkle(el){if(RM||!el||!el.isConnected)return;const r=el.getBoundingClientRect();if(!r.width)return;const cx=r.left+r.width/2,cy=r.top+r.height/2;
+  for(let i=0;i<10;i++){const s=document.createElement('span');s.className='spark';const a=i/10*Math.PI*2,d=50+Math.random()*30;
+   s.style.left=cx+'px';s.style.top=cy+'px';s.style.setProperty('--dx',(Math.cos(a)*d).toFixed(0)+'px');s.style.setProperty('--dy',(Math.sin(a)*d*.7).toFixed(0)+'px');
+   if(i%2)s.style.background='#fff3a0';document.body.appendChild(s);setTimeout(()=>s.remove(),850)}}
+
+/* ================= BUNYI ================= */
+let AC=null,master=null,mGain=null,mTimer=null;
+function actx(){try{if(!AC){AC=new (window.AudioContext||window.webkitAudioContext)();master=AC.createGain();master.gain.value=.6;master.connect(AC.destination);mGain=AC.createGain();mGain.gain.value=.5;mGain.connect(master)}if(AC.state==='suspended')AC.resume()}catch(e){AC=null}return AC}
+function tone(f,d,type,v,t0,f2,dest){const a=actx();if(!a)return;const t=a.currentTime+(t0||0);const o=a.createOscillator(),g=a.createGain();o.type=type||'sine';o.frequency.setValueAtTime(f,t);if(f2)o.frequency.exponentialRampToValueAtTime(f2,t+d);
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v||.15,t+.012);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(dest||master);o.start(t);o.stop(t+d+.05)}
+function noise(d,v){const a=actx();if(!a)return;const b=a.createBuffer(1,a.sampleRate*d,a.sampleRate),ch=b.getChannelData(0);for(let i=0;i<ch.length;i++)ch[i]=(Math.random()*2-1)*(1-i/ch.length);
+  const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();f.type='lowpass';f.frequency.value=900;g.gain.value=v||.2;s.buffer=b;s.connect(f);f.connect(g);g.connect(master);s.start()}
+const SFX={
+ ok(){if(!cfg.sfx)return;tone(660,.12,'triangle',.2);tone(990,.28,'triangle',.2,.1);tone(1320,.18,'square',.04,.2)},
+ no(){if(!cfg.sfx)return;tone(300,.35,'sawtooth',.06,0,110);noise(.3,.14)},
+ jump(){if(!cfg.sfx)return;tone(320,.22,'square',.05,0,950)},
+ click(){if(!cfg.sfx)return;tone(880,.05,'sine',.09)},
+ pick(){if(!cfg.sfx)return;tone(620,.08,'triangle',.12)},
+ win(){if(!cfg.sfx)return;[523,659,784,1046,784,1046,1318].forEach((f,i)=>tone(f,.28,'triangle',.18,i*.11))},
+ level(){if(!cfg.sfx)return;[523,659,784,1046].forEach((f,i)=>tone(f,.22,'triangle',.17,i*.1))}
+};
+const MEL=[523,0,659,784,659,0,587,523,440,0,523,587,523,0,392,0,523,0,659,784,880,0,784,659,587,0,523,587,523,0,0,0];
+const BASS=[131,0,0,0,110,0,0,0,147,0,0,0,98,0,0,0];
+function startMusic(){if(!cfg.music||mTimer||!actx())return;let i=0;mTimer=setInterval(()=>{const n=MEL[i%32];if(n)tone(n,.24,'triangle',.05,0,null,mGain);const b=BASS[i%16];if(b)tone(b,.5,'sine',.07,0,null,mGain);if(i%2===0)tone(2400,.03,'square',.006,0,null,mGain);i++},250)}
+function stopMusic(){clearInterval(mTimer);mTimer=null}
+function duck(on){if(mGain&&AC)mGain.gain.setTargetAtTime(on?.12:.5,AC.currentTime,.1)}
+document.addEventListener('visibilitychange',()=>{if(document.hidden)stopMusic();else if(S.inGame)startMusic()});
+
+/* ================= SUARA ================= */
+let voices=[];
+function loadVoices(){try{voices=speechSynthesis.getVoices().filter(v=>/^(ms|id)/i.test(v.lang))}catch(e){voices=[]}if(!$('settings').hidden)drawSettings()}
+if('speechSynthesis' in window){loadVoices();speechSynthesis.onvoiceschanged=loadVoices}
+function bestVoice(){if(cfg.voice){const v=voices.find(x=>x.voiceURI===cfg.voice);if(v)return v}
+  const sc=v=>(/natural|online|neural|premium|enhanced/i.test(v.name)?3:0)+(/google/i.test(v.name)?1:0);
+  return voices.filter(v=>/^ms/i.test(v.lang)).sort((a,b)=>sc(b)-sc(a))[0]||null}
+const ROLE={cikgu:{p:1,r:.88},narator:{p:1.05,r:.95},kancil:{p:1.4,r:1.05},buaya:{p:.5,r:.82}};
+function speak(t,role){
+  if(!('speechSynthesis' in window)){toast('Pelayar ini tiada suara. Guru boleh membaca dengan kuat.');return}
+  if(!bestVoice()){toast('Peranti ini tiada suara Bahasa Melayu. Buka Tetapan untuk cara menambahnya, atau guru boleh membaca dengan kuat.');return}
+  try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(t.replace(/<[^>]+>/g,'').replace(/[\[\]]/g,'').replace(/(\w)-(\w)/g,'$1 $2'));
+   const v=bestVoice(),R=ROLE[role||'cikgu'];u.lang=v?v.lang:'ms-MY';if(v)u.voice=v;u.pitch=R.p;u.rate=R.r;
+   u.onstart=()=>duck(true);u.onend=u.onerror=()=>duck(false);speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+/* ================= TETAPAN ================= */
+let cfg={sfx:true,music:true,talk:false,voice:''};
+try{Object.assign(cfg,JSON.parse(localStorage.getItem('kss-cfg')||'{}'))}catch(e){}
+function saveCfg(){try{localStorage.setItem('kss-cfg',JSON.stringify(cfg))}catch(e){}}
+function drawSettings(){
+  const best=bestVoice();
+  $('settings').innerHTML=`<h3>Tetapan</h3>
+   <label><input type="checkbox" id="cSfx" ${cfg.sfx?'checked':''}> Kesan bunyi (betul, salah, lompat)</label>
+   <label><input type="checkbox" id="cMus" ${cfg.music?'checked':''}> Muzik latar</label>
+   <label><input type="checkbox" id="cTalk" ${cfg.talk?'checked':''}> Watak bercakap secara automatik</label>
+   <div class="row"><b>Suara:</b><select id="cVoice"><option value="">${best?'Automatik ('+best.name+')':'Tiada suara Bahasa Melayu ditemui'}</option>${voices.map(v=>`<option value="${v.voiceURI}" ${cfg.voice===v.voiceURI?'selected':''}>${v.name} (${/^id/i.test(v.lang)?'Indonesia, tidak disyorkan':'Melayu'})</option>`).join('')}</select>
+   <button class="ibtn" id="cTest" type="button">Uji suara</button></div>
+   <p class="muted" style="font-size:.9rem">Permainan hanya menggunakan suara <b>Bahasa Melayu</b>. Cara mendapatkannya: <b>Komputer:</b> buka permainan dalam <b>Microsoft Edge</b> dan pilih suara Yasmin atau Osman (Natural). <b>iPhone/iPad:</b> buka dalam Safari (suara Amira). Google Chrome di komputer tiada suara Bahasa Melayu. Sang Kancil bersuara tinggi, Sang Buaya bersuara garau.</p>`;
+  $('cSfx').onchange=e=>{cfg.sfx=e.target.checked;saveCfg();audioIcon()};
+  $('cMus').onchange=e=>{cfg.music=e.target.checked;saveCfg();cfg.music&&S.inGame?startMusic():stopMusic();audioIcon()};
+  $('cTalk').onchange=e=>{cfg.talk=e.target.checked;saveCfg()};
+  $('cVoice').onchange=e=>{cfg.voice=e.target.value;saveCfg()};
+  $('cTest').onclick=()=>speak('Hai kawan-kawan! Aku Sang Kancil. Jom bantu aku menyeberang sungai!','kancil');
+}
+$('btnSet').innerHTML=IC.gear+'<span class="lbl">Tetapan</span>';
+$('btnSet').onclick=()=>{const s=$('settings');s.hidden=!s.hidden;$('btnSet').setAttribute('aria-expanded',String(!s.hidden));if(!s.hidden)drawSettings();SFX.click()};
+function audioIcon(){const on=cfg.sfx||cfg.music;$('btnAudio').innerHTML=(on?IC.sound:IC.mute)+`<span class="lbl">${on?'Bunyi':'Senyap'}</span>`;$('btnAudio').setAttribute('aria-pressed',String(on))}
+$('btnAudio').onclick=()=>{const on=!(cfg.sfx||cfg.music);cfg.sfx=on;cfg.music=on;saveCfg();on&&S.inGame?startMusic():stopMusic();audioIcon();if(!$('settings').hidden)drawSettings();SFX.click()};
+audioIcon();
+$('brandArt').innerHTML=`${avaK('happy')}<span>Pengembaraan Sang Kancil<br><span class="y" style="font-size:.8em">Misi Seberang</span> <span class="b" style="font-size:.8em">Sungai</span></span>`;
+
+/* ================= DIALOG WATAK ================= */
+let typeT=null,lastSay={who:'kancil',t:''};
+function say(who,t){
+  const tk=$('talk');tk.hidden=false;tk.className='talk '+who;$('ava').innerHTML=AVA[who]();$('who').textContent=who==='kancil'?'Sang Kancil':'Sang Buaya';
+  const b=tk.querySelector('.bub');b.style.animation='none';b.getBoundingClientRect();b.style.animation='';
+  lastSay={who,t};clearInterval(typeT);const el=$('say');
+  if(RM){el.textContent=t}else{let i=0;el.textContent='';typeT=setInterval(()=>{el.textContent=t.slice(0,++i);if(i>=t.length)clearInterval(typeT)},18)}
+  if(cfg.talk)speak(t,who);
+}
+$('sayBtn').innerHTML=ICON_SOUND;$('sayBtn').onclick=()=>speak(lastSay.t,lastSay.who);
+
+/* ================= KANDUNGAN ================= */
+const STORY=[
+ {t:'Pada suatu pagi, Sang Kancil berjalan di tepi <b>sungai</b>. Dia ternampak pokok <b>rambutan</b> yang berbuah lebat di <b>seberang</b>.',cap:'Kancil ternampak pokok rambutan di seberang sungai.'},
+ {t:'"Wah, merahnya buah rambutan itu!" kata Sang Kancil. Namun sungai itu dalam dan airnya deras. Banyak buaya tinggal di situ.',cap:'Sungai itu deras dan ada buaya.'},
+ {t:'Sang Kancil mendapat akal. Dia berdiri di atas <b>busut</b> lalu memanggil, "Wahai Sang Buaya, hebatnya kamu semua!"',cap:'Kancil berdiri di atas busut dan memanggil buaya.'},
+ {t:'"Raja Sulaiman menitahkan aku mengira jumlah kamu," kata Sang Kancil. Buaya-buaya pun berbaris dari tebing ke tebing.',cap:'Buaya-buaya berbaris dari tebing ke tebing.'},
+ {t:'Sang Kancil melompat dari kepala ke kepala buaya sambil mengira, "Satu, dua, tiga, empat…"',cap:'Kancil melompat sambil mengira buaya.'},
+ {t:'Akhirnya Sang Kancil sampai di seberang. "Terima kasih, Sang Buaya! Aku cuma <b>mahu</b> makan rambutan," katanya sambil ketawa. Buaya-buaya berasa sangat marah.',cap:'Kancil sampai di seberang. Buaya marah.'}
+];
+const P1=[
+ {w:'sungai',q:'Pilih sebutan yang betul.',o:['[su-ngai]','[su-nge]'],a:0,why:'Diftong ai disebut penuh. Jangan tukar bunyinya menjadi e.',h:'Dengar bunyi di hujung perkataan: a + i.'},
+ {w:'busut',q:'Pilih sebutan yang betul.',o:['[bu-suk]','[bu-sut]'],a:1,why:'Konsonan akhir t disebut dengan jelas, bukan ditukar menjadi k.',h:'Lihat huruf terakhir perkataan ini.'},
+ {w:'seberang',q:'Pilih sebutan yang betul.',o:['[se-brang]','[se-be-rang]'],a:1,why:'Ada tiga suku kata: se + be + rang. Vokal di tengah tidak boleh digugurkan.',h:'Kira bilangan vokal dalam perkataan ini.'},
+ {w:'rambutan',q:'Pilih pecahan suku kata yang betul.',o:['ram-bu-tan','ramb-u-tan'],a:0,why:'Suku katanya ialah ram + bu + tan. Setiap suku kata ada satu vokal.',h:'Setiap suku kata mesti ada satu vokal.'},
+ {w:'berfikir',q:'Pilih bentuk baku dalam bahasa Melayu.',o:['berpikir','berfikir'],a:1,why:'Bentuk baku ialah berfikir, daripada kata dasar fikir.',h:'Apakah kata dasarnya? fikir atau pikir?'},
+ {w:'mahu',q:'Pilih bentuk baku dalam bahasa Melayu.',o:['mahu','mau'],a:0,why:'Bentuk baku ialah mahu. Perkataan mau ialah bentuk tidak baku.',h:'Cari perkataan ini dalam slaid terakhir cerita.'}
+];
+const P2=[
+ {s:'Sang Kancil ternampak pokok rambutan di seberang sungai',p:'.',a:'penyata',r:'narator'},
+ {s:'Wah, merahnya buah rambutan itu',p:'!',a:'seruan',r:'kancil'},
+ {s:'Bagaimanakah aku hendak menyeberang sungai ini',p:'?',a:'tanya',r:'kancil'},
+ {s:'Wahai Sang Buaya, hebatnya kamu semua',p:'!',a:'seruan',r:'kancil'},
+ {s:'Berapa ekorkah buaya di sungai ini',p:'?',a:'tanya',r:'kancil'},
+ {s:'Buaya-buaya itu berbaris dari tebing ke tebing',p:'.',a:'penyata',r:'narator'}
+];
+const TONE={
+ penyata:{label:'Penyata',why:'Ayat penyata memberi maklumat. Nada mendatar, kemudian menurun di hujung ayat.',pts:'10,40 120,38 250,40 330,42 420,70 510,90'},
+ tanya:{label:'Tanya',why:'Ayat tanya meminta jawapan. Nada meninggi pada kata tanya dan di hujung ayat.',pts:'10,60 120,58 250,56 330,52 420,34 510,12'},
+ seruan:{label:'Seruan',why:'Ayat seruan meluahkan perasaan. Nada tinggi dan bertenaga pada kata seru, kemudian menurun.',pts:'10,70 60,10 140,24 250,38 380,52 510,74'}
+};
+const P2H={penyata:'Tiada kata tanya dan tiada kata seru. Ayat ini memberitahu sesuatu.',tanya:'Cari perkataan seperti bagaimanakah, berapa atau -kah.',seruan:'Cari kata seru seperti wah atau wahai.'};
+const P3=[
+ {w:'Pada suatu pagi Sang Kancil berjalan di tepi sungai.',k:2,h:'Pisahkan bila peristiwa berlaku dengan apa yang berlaku.'},
+ {w:'Sang Kancil ternampak pokok rambutan di seberang sungai.',k:4,h:'Pisahkan apa yang dilihat dengan di mana ia berada.'},
+ {w:'Raja Sulaiman menitahkan aku mengira jumlah kamu semua.',k:3,h:'Berhenti sebelum tugasan yang dititahkan.'},
+ {w:'Sang Kancil melompat dari kepala ke kepala buaya.',k:2,h:'Berhenti selepas perbuatan Sang Kancil.'}
+];
+const P4L=['busut','sungai','air','lompat','buaya'];
+const P4R={busut:'takut',sungai:'pantai',air:'cair',lompat:'cepat',buaya:'raya'};
+const P5B=[
+ {q:'Siapakah watak yang bijak dalam cerita ini?',o:['Sang Buaya','Sang Kancil','Raja Sulaiman'],a:1,why:'Sang Kancil menggunakan akal untuk menyeberang sungai.',h:'Siapakah yang mendapat akal untuk menyeberang sungai?'},
+ {q:'Di manakah latar tempat cerita ini?',o:['Di tepi sungai','Di dalam gua','Di tepi laut'],a:0,why:'Cerita ini berlaku di sungai yang ada buaya.',h:'Di manakah buaya-buaya itu tinggal?'},
+ {q:'Apakah pengajaran cerita ini?',o:['Gunakan akal untuk menyelesaikan masalah','Jangan makan buah rambutan','Buaya ialah haiwan yang lemah'],a:0,why:'Masalah yang besar boleh diselesaikan dengan berfikir secara kreatif.',h:'Bagaimanakah Sang Kancil berjaya sampai ke seberang?'}
+];
+const PRAISE=['Hebat! Aku dapat sebiji rambutan!','Betul! Kamu memang bijak!','Syabas! Jom teruskan!','Tepat sekali! Nyam, nyam!','Wah, cemerlang!','Bagus! Telinga kamu memang tajam!','Pandai! Satu lagi rambutan untuk aku!','Terbaik! Buaya pun terkejut!'];
+const RETRY_PRAISE=['Betul! Tetapi rambutan ini sudah terlepas tadi.','Ya, itu jawapannya! Lain kali cuba betul pada kali pertama.','Betul pada cubaan kedua. Teruskan usaha!'];
+const RIMA_END={busut:'ut',sungai:'ai',air:'ir',lompat:'at',buaya:'a'};
+const SUG={
+ p1:'Ulang kaji sebutan diftong (ai), konsonan akhir (t) dan pecahan suku kata. Dengar semula sebutan setiap perkataan.',
+ p2:'Latih mengenal kata tanya (bagaimanakah, berapa, -kah) dan kata seru (wah, wahai). Dengar perubahan nada di hujung ayat.',
+ p3:'Baca ayat dengan kuat dan berhenti seketika antara bahagian "bila atau siapa" dengan "apa yang berlaku".',
+ p4:'Sebut pasangan perkataan perlahan-lahan dan dengar bunyi akhirnya. Cuba cipta pantun ringkas tentang Sang Kancil.',
+ p5:'Baca semula cerita dan senaraikan peristiwa dari awal hingga akhir. Bincangkan watak, latar dan pengajaran.'
+};
+const BADGES=[
+ {id:'pertama',n:'Langkah Pertama',d:'Jawapan betul yang pertama',c:'#4caf50',g:'1'},
+ {id:'rentak3',n:'Rentak Hebat',d:'3 jawapan betul berturut-turut',c:'#ff8a1f',g:'3'},
+ {id:'rentak5',n:'Kancil Pantas',d:'5 jawapan betul berturut-turut',c:'#e53935',g:'5'},
+ {id:'rentak10',n:'Tak Terkalahkan',d:'10 jawapan betul berturut-turut',c:'#8e44ad',g:'10'},
+ {id:'p1',n:'Telinga Tajam',d:'6/6 dalam Dengar & Sebut',c:'#1e88e5',g:'★'},
+ {id:'p2',n:'Raja Intonasi',d:'6/6 dalam Teka Intonasi',c:'#1e88e5',g:'★'},
+ {id:'p3',n:'Pakar Jeda',d:'4/4 dalam Letak Jeda',c:'#1e88e5',g:'★'},
+ {id:'p4',n:'Penyair Cilik',d:'5/5 dalam Padankan Rima',c:'#1e88e5',g:'★'},
+ {id:'p5',n:'Pencerita Hebat',d:'9/9 dalam Susun Cerita',c:'#1e88e5',g:'★'},
+ {id:'tamat',n:'Juara Seberang',d:'Berjaya menyeberang sungai',c:'#ffd23f',g:'♛'},
+ {id:'sempurna',n:'Rambutan Penuh',d:'30/30 biji rambutan',c:'#e53935',g:'30'}
+];
+function badgeArt(b){return `<svg class="bdg" viewBox="0 0 56 56" aria-hidden="true"><path d="M28 3 l6 5 8 -1 3 7 7 4 -1 8 5 6 -5 6 1 8 -7 4 -3 7 -8 -1 -6 5 -6 -5 -8 1 -3 -7 -7 -4 1 -8 -5 -6 5 -6 -1 -8 7 -4 3 -7 8 1z" fill="${b.c}" stroke="#26364d" stroke-width="2.5" stroke-linejoin="round"/><circle cx="28" cy="28" r="15" fill="#fff" stroke="#26364d" stroke-width="2.5"/><text x="28" y="${b.g.length>1?34:35}" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="${b.g.length>1?15:19}" fill="#26364d">${b.g}</text></svg>`}
+const TAUNT=['Hehe, salah! Hampir aku dapat menangkap kamu!','Grrr... cuba dengar sekali lagi!','Ha! Belum tepat, Kancil!','Hampir saja! Hati-hati, aku lapar!'];
+const LV=[
+ {k:'p1',t:'Dengar & Sebut',m:6,b:'Grr! Aku Buaya Satu. Sebut perkataan dengan betul, baru boleh lalu!',d:'Lihat perkataan daripada cerita. Pilih sebutan atau bentuk yang betul, kemudian dengar sebutannya.',f:()=>p1(0)},
+ {k:'p2',t:'Teka Intonasi',m:6,b:'Aku Buaya Dua. Dengar ayat, kemudian teka jenisnya!',d:'Ayat dipaparkan tanpa tanda baca. Dengar ayat itu, kemudian teka jenisnya: penyata, tanya atau seruan.',f:()=>p2(0)},
+ {k:'p3',t:'Letak Jeda',m:4,b:'Aku Buaya Tiga. Baca dengan jeda yang betul. Kalau tidak... ngap!',d:'Klik ruang di antara dua perkataan untuk meletakkan tanda jeda ( / ). Jeda ialah tempat kita berhenti seketika semasa bercerita.',f:()=>p3(0)},
+ {k:'p4',t:'Padankan Rima',m:5,b:'Aku Buaya Empat. Aku suka perkataan berima. Padankan semuanya!',d:'Pilih satu perkataan di sebelah kiri, kemudian pilih perkataan yang berima dengannya di sebelah kanan.',f:()=>p4()},
+ {k:'p5',t:'Susun Cerita',m:9,b:'Aku Buaya Lima, yang terakhir! Susun cerita ini dengan betul!',d:'Susun enam kad mengikut turutan cerita. Klik satu kad, kemudian klik kad lain untuk menukar tempat. Kemudian jawab tiga soalan sastera.',f:()=>p5()}
+];
+
+/* ================= KEADAAN ================= */
+let S={mode:'kelas',groups:[],gc:2};
+function newRec(){const r={};LV.forEach(l=>r[l.k]={n:0,ok:0,wa:0});return r}
+function reset(){S={mode:S.mode,gc:S.gc,groups:S.groups.map(g=>({name:g.name,score:0})),turn:0,score:{p1:0,p2:0,p3:0,p4:0,p5:0},pos:0,lv:0,inGame:false,rec:newRec(),streak:0,best:0,badges:[]}}
+reset();
+const app=$('app');
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function toast(t){const el=$('toast');el.textContent=t;el.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(()=>el.hidden=true,3200)}
+const soundBtn=(id,l)=>`<button class="sound" type="button" id="${id}">${ICON_SOUND}${l||'Dengar'}</button>`;
+const total=()=>Object.values(S.score).reduce((a,b)=>a+b,0);
+function group(){return S.mode==='kumpulan'?S.groups[S.turn]:null}
+function turnLine(){const g=group();return g?`<span class="turn" id="turnL">Giliran: ${g.name}</span>`:''}
+function hud(bump){
+  const sc=$('score');sc.hidden=!S.inGame;sc.innerHTML=`${ICON_R}${total()} / 30`;
+  if(bump){sc.classList.remove('bump');void sc.offsetWidth;sc.classList.add('bump')}
+  $('chips').innerHTML=S.mode==='kumpulan'&&S.inGame?S.groups.map((g,i)=>`<span class="pill ${i===S.turn?'now':''}">${g.name}: ${g.score}</span>`).join(''):'';
+  $('btnMenu').hidden=!S.inGame;
+  const sk=$('streak');sk.hidden=!(S.inGame&&S.streak>=2);
+  if(!sk.hidden)sk.innerHTML=`<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2c1 4 6 6 6 12a6 6 0 0 1-12 0c0-3 2-5 3-6 0 2 1 3 2 3 0-3-1-6 1-9z" fill="#ff8a1f" stroke="#26364d" stroke-width="1.8" stroke-linejoin="round"/><path d="M12 13c1 2 3 3 3 5a3 3 0 0 1-6 0c0-1 1-2 1-3 1 1 2 0 2-2z" fill="#ffd23f"/></svg>${S.streak} berturut`;
+  const ld=$('lvdots');ld.hidden=!S.inGame;$('progWrap').hidden=!S.inGame;
+  if(S.inGame)ld.innerHTML=[1,2,3,4,5].map(i=>`<span class="dot ${i<=S.pos?'done':i===S.lv+1?'cur':''}" title="Buaya ${i}">${i<=S.pos?'★':i}</span>`).join('');
+}
+function setProg(k,i,n){$('bar').style.width=Math.min(100,(k+i/n)/5*100)+'%';if(curExpr!=='think'&&!exprT)setExpr('think')}
+function nextTurn(){if(S.mode==='kumpulan'){S.turn=(S.turn+1)%S.groups.length;const t=$('turnL');if(t)t.textContent='Giliran: '+group().name}hud()}
+function right(lv,msg){S.score[lv]++;const g=group();if(g)g.score++;
+  S.rec[lv].n++;S.rec[lv].ok++;S.streak++;S.best=Math.max(S.best,S.streak);
+  SFX.ok();setExpr('happy',1600);kAnim('hop',550);floatPlus();sparkle(lastEl);hud(true);say('kancil',msg||pick(PRAISE));
+  if(total()===1)giveBadge('pertama');
+  if(S.streak===3)giveBadge('rentak3');if(S.streak===5)giveBadge('rentak5');if(S.streak===10)giveBadge('rentak10');
+  if(S.streak>=3&&S.streak%3===0)streakCheer();}
+function rightRetry(lv){S.rec[lv].n++;S.streak=0;SFX.pick();setExpr('happy',1200);kAnim('hop',550);hud();say('kancil',pick(RETRY_PRAISE))}
+function missed(lv){S.rec[lv].n++;S.streak=0;hud()}
+function wrong(msg){const lv=LV[S.lv].k;S.rec[lv].wa++;S.streak=0;hud();SFX.no();setExpr('shock',1600);snapCroc(S.lv+1);kAnim('kshake',450);say('buaya',msg||pick(TAUNT))}
+function streakCheer(){const e=$('streak');if(!e)return;e.classList.remove('bump');void e.offsetWidth;e.classList.add('bump');if(!RM)confetti(40)}
+/* lencana */
+let allBadges=[];try{allBadges=JSON.parse(localStorage.getItem('kss-badges')||'[]')}catch(e){allBadges=[]}
+const badgeQ=[];let badgeBusy=false;
+function giveBadge(id){if(S.badges.includes(id))return;S.badges.push(id);if(!allBadges.includes(id)){allBadges.push(id);try{localStorage.setItem('kss-badges',JSON.stringify(allBadges))}catch(e){}}badgeQ.push(id);showBadge()}
+function showBadge(){if(badgeBusy||!badgeQ.length)return;const id=badgeQ.shift(),b=BADGES.find(x=>x.id===id);if(!b){showBadge();return}badgeBusy=true;
+  const el=document.createElement('div');el.className='badge-pop';el.setAttribute('role','status');
+  el.innerHTML=`${badgeArt(b)}<div><span class="lbl2">Lencana baharu!</span><b>${b.n}</b><span class="muted" style="font-size:.85rem;font-weight:800">${b.d}</span></div>`;
+  document.body.appendChild(el);setTimeout(()=>{if(cfg.sfx){tone(1046,.12,'triangle',.12);tone(1568,.2,'triangle',.12,.1)}},100);
+  setTimeout(()=>{el.classList.add('out');setTimeout(()=>{el.remove();badgeBusy=false;showBadge()},400)},2600)}
+function view(opt){ // opt: {stage:bool,talk:bool}
+  $('stageWrap').hidden=!opt.stage;if(!opt.talk)$('talk').hidden=true;
+  S.inGame=!!opt.game;hud();if(S.inGame)startMusic();else stopMusic();
+  window.scrollTo({top:0,behavior:RM?'auto':'smooth'});
+}
+
+/* ================= KONFETI ================= */
+function confetti(n){if(RM)return;const cv=$('confetti'),cx=cv.getContext('2d');cv.width=innerWidth;cv.height=innerHeight;
+  const col=['#e53935','#ffd23f','#4caf50','#1e88e5','#ff8a1f'];const P=Array.from({length:n||140},()=>({x:innerWidth/2+(Math.random()-.5)*200,y:innerHeight*.35,vx:(Math.random()-.5)*14,vy:-Math.random()*14-4,r:Math.random()*6+4,c:pick(col),a:Math.random()*6,s:Math.random()*.3-.15}));
+  const t0=performance.now();(function f(t){cx.clearRect(0,0,cv.width,cv.height);P.forEach(p=>{p.vy+=.35;p.x+=p.vx;p.y+=p.vy;p.a+=p.s;cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);cx.fillStyle=p.c;cx.fillRect(-p.r/2,-p.r/4,p.r,p.r/2);cx.restore()});
+  if(t-t0<2800)requestAnimationFrame(f);else cx.clearRect(0,0,cv.width,cv.height)})(t0)}
+
+/* ================= SKRIN UTAMA ================= */
+function home(){
+  view({});const sv=loadSave();
+  app.innerHTML=`<section class="screen">
+   <div class="hero">
+    <div style="display:flex;flex-direction:column;gap:14px">
+     <span class="eyebrow">Bahasa Melayu Tahun 4 · SK 1.3 · SP 1.3.1</span>
+     <p style="font-family:var(--display);font-weight:800;font-size:1.3rem;color:var(--forest);line-height:1">Pengembaraan Sang Kancil</p>
+     <h1><span class="o">Misi</span> <span class="g">Seberang</span> <span class="b">Sungai</span></h1>
+     <p>Sang Kancil mahu makan rambutan di seberang sungai. Lima ekor buaya menunggu dengan cabaran! Jawab dengan betul untuk membantu Kancil melompat dan kumpul <b>30 biji rambutan</b>.</p>
+     ${sv?`<div class="resume"><b>Ada pengembaraan yang belum selesai</b><span class="muted" style="font-weight:700">Buaya ${sv.lv+1} daripada 5 · ${Object.values(sv.score).reduce((a,b)=>a+b,0)} biji rambutan · ${sv.mode==='kumpulan'?'Mod Kumpulan':'Mod Kelas'}</span>
+       <div class="row"><button class="btn big cta" id="resume" type="button">${IC.play}Sambung Permainan</button></div></div>`:''}
+     <div class="row"><button class="btn ${sv?'alt':'big cta'}" id="go" type="button">${IC.play}${sv?'Permainan Baharu':'Mula Bermain'}</button><button class="btn alt" id="gd" type="button">${IC.info}Panduan Guru</button></div>
+     <div class="confirm" id="cf" hidden><b>Mulakan permainan baharu?</b><span>Kemajuan yang disimpan (Buaya ${sv?sv.lv+1:1}, ${sv?Object.values(sv.score).reduce((a,b)=>a+b,0):0} biji rambutan) akan dipadam.</span>
+       <div class="row"><button class="btn red" id="cfYes" type="button">Ya, mula baharu</button><button class="btn alt" id="cfNo" type="button">Batal</button></div></div>
+     ${allBadges.length?`<p class="muted" style="font-weight:800;font-size:.9rem">Lencana dikumpul pada peranti ini: ${allBadges.length} / ${BADGES.length}</p>`:''}
+    </div>
+    ${scene(0,'Sang Kancil yang gembira di tebing sungai, bersedia untuk menyeberang')}
+   </div></section>`;
+  $('go').onclick=()=>{SFX.click();actx();if(sv){$('cf').hidden=false;$('cfYes').focus()}else modeScreen()};
+  if(sv){$('resume').onclick=()=>{SFX.click();actx();resumeGame()};
+    $('cfYes').onclick=()=>{SFX.click();clearSave();modeScreen()};$('cfNo').onclick=()=>{SFX.click();$('cf').hidden=true}}
+  $('gd').onclick=()=>{SFX.click();guide()};
+}
+function modeScreen(){
+  view({});
+  if(!S.groups.length)S.groups=['Merah','Biru','Hijau','Kuning'].map(n=>({name:'Kumpulan '+n,score:0}));
+  const n=S.gc;
+  app.innerHTML=`<section class="screen">
+   <span class="eyebrow">Sebelum bermula</span><h2>Siapa yang bermain?</h2>
+   <div class="cards">
+    <button class="card ${S.mode==='kelas'?'sel':''}" data-m="kelas" type="button"><span class="ic">${IC.projector}</span><h3>Mod Kelas</h3><p class="muted">Guru mengawal permainan di projektor. Seluruh kelas menjawab bersama.</p></button>
+    <button class="card ${S.mode==='kumpulan'?'sel':''}" data-m="kumpulan" type="button"><span class="ic">${IC.group}</span><h3>Mod Kumpulan</h3><p class="muted">2 hingga 4 kumpulan bertanding dan menjawab secara bergilir.</p></button>
+   </div>
+   <div ${S.mode==='kumpulan'?'':'hidden'} class="qbox">
+    <div class="row"><b>Bilangan kumpulan:</b>${[2,3,4].map(k=>`<button class="btn ${k===n?'gold':'alt'}" data-n="${k}" type="button">${k}</button>`).join('')}</div>
+    <div class="grp-inputs">${S.groups.slice(0,n).map((g,i)=>`<label>Nama kumpulan ${i+1}<input type="text" id="g${i}" value="${g.name}" maxlength="20"></label>`).join('')}</div>
+   </div>
+   <div class="row spread"><button class="btn alt" id="bk" type="button">Kembali</button><button class="btn big" id="st" type="button">Mula Cerita</button></div>
+  </section>`;
+  app.querySelectorAll('[data-m]').forEach(b=>b.onclick=()=>{SFX.pick();S.mode=b.dataset.m;modeScreen()});
+  app.querySelectorAll('[data-n]').forEach(b=>b.onclick=()=>{SFX.pick();S.gc=+b.dataset.n;modeScreen()});
+  $('bk').onclick=home;
+  $('st').onclick=()=>{SFX.click();
+    if(S.mode==='kumpulan')S.groups=S.groups.slice(0,n).map((g,i)=>({name:($('g'+i).value.trim()||g.name),score:0}));
+    reset();story(0)};
+}
+
+/* ================= CERITA ================= */
+function story(i){
+  view({});const s=STORY[i];
+  app.innerHTML=`<section class="screen">
+   <div class="row spread"><span class="tag">Cerita · ${i+1} / ${STORY.length}</span>${soundBtn('snd','Dengar cerita')}</div>
+   ${scene(i+1,s.cap)}
+   <div class="qbox"><p class="sentence" style="font-weight:600">${s.t}</p></div>
+   <div class="row spread"><button class="btn alt" id="pv" type="button" ${i===0?'disabled':''}>Sebelum</button>
+    <button class="btn ${i===STORY.length-1?'red big cta':''}" id="nx" type="button">${i===STORY.length-1?'Bantu Kancil!':'Seterusnya'}</button></div>
+   <p class="muted" style="font-size:.9rem">Perkataan <b>tebal</b> akan muncul dalam permainan.</p>
+  </section>`;
+  $('snd').onclick=()=>speak(s.t,'narator');
+  $('pv').onclick=()=>{SFX.click();story(i-1)};
+  $('nx').onclick=()=>{SFX.click();if(i<STORY.length-1)story(i+1);else{buildStage();map(0,false)}};
+}
+
+/* ================= PENGENALAN PERINGKAT ================= */
+function intro(k){
+  S.lv=k;view({stage:true,talk:true,game:true});setTarget(k+1);
+  $('bar').style.width=(k/5*100)+'%';clearTimeout(exprT);exprT=null;setExpr('excited');if(k===0)kAnim('hop',550);
+  say('buaya',LV[k].b);
+  app.innerHTML=`<section class="screen" style="align-items:center;text-align:center">
+   <svg class="intro-art" viewBox="-100 -34 180 58" aria-hidden="true"><g class="bob">${buayaArt(false)}</g></svg>
+   <span class="tag" style="align-self:center">Buaya ${k+1} daripada 5</span><h2>${LV[k].t}</h2>
+   <p style="max-width:560px">${LV[k].d}</p>
+   <p class="pill">${ICON_R}${LV[k].m} biji rambutan untuk dikumpul</p>
+   <div class="row" style="justify-content:center"><button class="btn alt" id="toMap" type="button">Kembali ke Peta</button><button class="btn big gold cta" id="go" type="button">Sedia!</button></div></section>`;
+  $('go').onclick=()=>{SFX.click();setExpr('think');say('kancil','Jom! Bantu aku menjawab dengan betul.');LV[k].f()};
+  $('toMap').onclick=()=>{SFX.click();map(k,false)};
+}
+function levelDone(k){
+  setTarget(0);markDone(k+1);moveKancil(k+1,true);clearTimeout(exprT);exprT=null;setExpr('excited');
+  $('bar').style.width=((k+1)/5*100)+'%';hud();
+  setTimeout(()=>{SFX.level();confetti(80)},500);
+  const got=S.score[LV[k].k],m=LV[k].m,perfect=got===m;
+  say('kancil',k<4?`Yahoo! Aku sudah melompat ke atas Buaya ${k+1}!`:'Tinggal satu lompatan lagi ke tebing seberang!');
+  const md=document.createElement('div');md.className='modal';
+  md.innerHTML=`<div class="qbox"><svg class="kart" viewBox="-40 -66 104 96" aria-hidden="true"><g class="bobk">${kancilArt('excited')}</g></svg><span class="tag" style="align-self:center">Peringkat ${k+1} selesai · Buaya ${k+1} berjaya dilepasi</span><h2>${LV[k].t}</h2><div class="st">${stars(got,m)}</div><p class="pill">${ICON_R}<b>${got} / ${m}</b> biji rambutan</p>
+   <p style="font-weight:800">${perfect?'Sempurna! Semua jawapan betul pada cubaan pertama.':got/m>=.6?'Bagus! Kamu sudah menguasai sebahagian besar peringkat ini.':'Peringkat selesai. Teruskan berlatih, kamu boleh!'}</p>
+   <button class="btn big" id="mdGo" type="button">${k<4?'Lihat Peta':'Lompat ke seberang!'}</button></div>`;
+  document.body.appendChild(md);$('mdGo').focus();
+  if(perfect)setTimeout(()=>giveBadge(LV[k].k),700);
+  $('mdGo').onclick=()=>{SFX.click();md.remove();k<4?map(k+1,true):finale()};
+}
+function finale(){
+  moveKancil(6,true);setTimeout(()=>{SFX.win();confetti(200);setExpr('happy');const e=$('kci');if(e)e.classList.add('dance')},700);
+  $('bar').style.width='100%';
+  say('kancil','Yeay! Aku sampai di seberang. Terima kasih kerana membantu aku!');
+  app.innerHTML=`<section class="screen" style="align-items:center;text-align:center"><h2>Kancil sampai di seberang!</h2>
+   <p>Sebelum melihat keputusan, mari kita berbincang sebentar.</p><button class="btn big" id="nx" type="button">Teruskan</button></section>`;
+  $('nx').onclick=()=>{SFX.click();discuss()};
+  setTimeout(()=>giveBadge('tamat'),1200);
+}
+
+/* ================= SIMPAN KEMAJUAN ================= */
+const SAVE_KEY='kss-save';
+function saveProgress(){try{localStorage.setItem(SAVE_KEY,JSON.stringify({v:1,t:Date.now(),mode:S.mode,gc:S.gc,groups:S.groups,turn:S.turn,score:S.score,pos:S.pos,lv:S.lv,rec:S.rec,streak:S.streak,best:S.best,badges:S.badges}))}catch(e){}}
+function loadSave(){try{const d=JSON.parse(localStorage.getItem(SAVE_KEY)||'null');if(d&&d.v===1&&d.score&&d.rec&&d.lv>=0&&d.lv<5)return d}catch(e){}return null}
+function clearSave(){try{localStorage.removeItem(SAVE_KEY)}catch(e){}}
+function resumeGame(){
+  const d=loadSave();if(!d){home();return}
+  S={mode:d.mode,gc:d.gc||2,groups:d.groups||[],turn:d.turn||0,score:d.score,pos:d.pos,lv:d.lv,rec:d.rec,streak:d.streak||0,best:d.best||0,badges:d.badges||[],inGame:false};
+  buildStage();for(let i=1;i<=S.pos;i++)markDone(i);
+  const kc=$('kc');kc.style.transition='none';moveKancil(S.pos,false);kc.getBoundingClientRect();kc.style.transition='';
+  map(S.lv,false,true);
+}
+
+/* ================= PETA PENGEMBARAAN ================= */
+const MP=[[48,250],[150,240],[225,112],[300,232],[375,104],[452,224],[548,112]];
+function segPath(a,b){const [x1,y1]=MP[a],[x2,y2]=MP[b];const mx=(x1+x2)/2,my=Math.min(y1,y2)+(Math.abs(y1-y2)<30?-40:0)+(y2<y1?20:-20);return `M${x1} ${y1} Q${mx} ${my} ${x2} ${y2}`}
+function map(k,unlock,resumed){
+  S.lv=k;view({stage:false,talk:true,game:true});saveProgress();
+  setExpr('normal');$('bar').style.width=(k/5*100)+'%';
+  say('kancil',resumed?`Selamat kembali! Kita sambung di Buaya ${k+1}.`:unlock?`Laluan ke Buaya ${k+1} sudah terbuka! Jom teruskan!`:'Inilah peta pengembaraan kita. Jom mulakan dengan Buaya 1!');
+  let segs='',nodes='';
+  for(let s=0;s<6;s++){
+    segs+=`<path d="${segPath(s,s+1)}" fill="none" stroke="#fff" stroke-width="7" stroke-dasharray="2 12" stroke-linecap="round" opacity=".9"/>`;
+    if(s<=k&&s<5)segs+=`<path class="${unlock&&s===k?'seg-draw':''}" d="${segPath(s,s+1)}" fill="none" stroke="#ffd23f" stroke-width="7" stroke-linecap="round" stroke-dasharray="${unlock&&s===k?'':'none'}"/>`;
+  }
+  for(let i=0;i<5;i++){
+    const [x,y]=MP[i+1],st=i<k?'done':i===k?'cur':'lock',l=LV[i],sc=S.score[l.k];
+    const fill=st==='done'?'#ffd23f':st==='cur'?'#ff8a1f':'#cfd6dd';
+    const label=`<text x="${x}" y="${y+48}" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="13" fill="#26364d" stroke="#fff" stroke-width="4" paint-order="stroke">${l.t}</text>`;
+    const inner=st==='done'?`<text y="8" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="24" fill="#26364d">★</text>`
+      :st==='cur'?`<text y="8" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="22" fill="#fff" stroke="#26364d" stroke-width="1">${i+1}</text>`
+      :`<g><rect x="-8" y="-3" width="16" height="13" rx="3" fill="#8a96a3" stroke="#26364d" stroke-width="2"/><path d="M-5 -3 v-4 a5 5 0 0 1 10 0 v4" fill="none" stroke="#26364d" stroke-width="2.5"/></g>`;
+    const lockFly=(unlock&&st==='cur')?`<g class="lockfly" transform="translate(0,0)"><rect x="-8" y="-3" width="16" height="13" rx="3" fill="#8a96a3" stroke="#26364d" stroke-width="2"/><path d="M-5 -3 v-4 a5 5 0 0 1 10 0 v4" fill="none" stroke="#26364d" stroke-width="2.5"/></g>`:'';
+    const starsTxt=st==='done'?`<text x="${x}" y="${y-36}" text-anchor="middle" font-size="15" font-weight="900" fill="#ffd23f" stroke="#26364d" stroke-width="1">${'★'.repeat(starN(sc,l.m))}${'☆'.repeat(3-starN(sc,l.m))}</text>`:'';
+    nodes+=`<g class="mnode ${st} ${unlock&&st==='cur'?'unlocking':''}" ${st==='cur'?`id="mcur" tabindex="0" role="button" aria-label="Mula Buaya ${i+1}: ${l.t}"`:`aria-label="Buaya ${i+1}: ${l.t}, ${st==='done'?'selesai':'belum dibuka'}"`}>
+      <g transform="translate(${x},${y})">${st==='cur'?'<circle class="ring" r="34" fill="#ff8a1f" opacity=".35"/>':''}
+      <g class="body"><circle r="27" fill="${fill}" stroke="#26364d" stroke-width="3.5"/><circle r="20" fill="none" stroke="#fff" stroke-width="2" opacity=".6"/>${(unlock&&st==='cur')?'':inner}${(unlock&&st==='cur')?inner:''}</g>${lockFly}</g>${label}${starsTxt}</g>`;
+  }
+  const [kx,ky]=MP[S.pos];
+  app.innerHTML=`<section class="screen">
+   <div class="row spread"><span class="tag">Peta Pengembaraan</span><span class="pill">${ICON_R}${total()} / 30</span></div>
+   <div class="mapwrap"><svg viewBox="0 0 600 330" role="img" aria-label="Peta perjalanan Sang Kancil melalui lima buaya">
+    <rect width="600" height="330" fill="#8bc34a"/>
+    <path d="M100 0 Q80 80 105 165 Q130 250 100 330 L500 330 Q470 250 495 165 Q520 80 500 0Z" fill="#4fb3f6" stroke="#26364d" stroke-width="3"/>
+    <g class="wave" stroke="#cfeaff" stroke-width="3" fill="none" stroke-linecap="round" opacity=".8"><path d="M110 60 q12 -6 24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0"/><path d="M110 175 q12 -6 24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0"/><path d="M110 295 q12 -6 24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0 t24 0"/></g>
+    ${bush(30,70,.9)}${bush(70,150,.7,'#2e7d32')}${bush(24,315,.8)}${bunga(80,300,.8)}${bunga(20,190,.7)}${rock(112,160,10,7)}${rock(490,280,11,7)}
+    ${bush(565,250,.9)}${bush(520,310,.7,'#2e7d32')}${bunga(585,190,.8)}
+    <g transform="translate(548,60)"><circle r="40" fill="#2e7d32" stroke="#26364d" stroke-width="3"/><circle r="33" fill="#43a047"/>${[[-16,-10],[0,-20],[14,-6],[-8,8],[12,14],[-20,10],[22,-20]].map(p=>rambutan(p[0],p[1],5)).join('')}</g>
+    <text x="594" y="150" text-anchor="end" font-family="Baloo 2, sans-serif" font-weight="800" font-size="14" fill="#26364d" stroke="#fff" stroke-width="4" paint-order="stroke">Pokok Rambutan</text>
+    <text x="48" y="292" text-anchor="middle" font-family="Baloo 2, sans-serif" font-weight="800" font-size="14" fill="#26364d" stroke="#fff" stroke-width="4" paint-order="stroke">Mula</text>
+    ${segs}${nodes}
+    ${butterfly(300,40,'#ffd23f',0)}
+    <g transform="translate(${kx},${ky-34}) scale(.55)"><g class="bobk">${kancilArt(unlock?'excited':'happy')}</g></g>
+   </svg></div>
+   <div class="maplegend"><span><i style="background:#ffd23f"></i>Selesai</span><span><i style="background:#ff8a1f"></i>Sedang dimainkan</span><span><i style="background:#cfd6dd"></i>Belum dibuka</span></div>
+   <div class="row spread"><span class="muted" style="font-size:.9rem">Kemajuan disimpan secara automatik pada peranti ini sahaja.</span><button class="btn big cta" id="goLv" type="button">${IC.play}Buaya ${k+1}: ${LV[k].t}</button></div>
+  </section>`;
+  if(unlock)setTimeout(()=>{SFX.level()},500);
+  const start=()=>{SFX.click();intro(k)};
+  $('goLv').onclick=start;const mc=$('mcur');mc.onclick=start;mc.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();start()}};
+}
+
+/* ================= P1 ================= */
+/* soalan aneka pilihan: cubaan pertama memberi rambutan; salah kali pertama = petunjuk + cuba lagi; salah kali kedua = jawapan didedahkan */
+function mcq(o){
+  let tries=0;const all=[...app.querySelectorAll('.opt')];
+  const finish=ok=>{all.forEach(x=>{x.disabled=true;if(o.isOk(x))x.classList.add('ok')});const h=$('ht');if(h)h.disabled=true;o.reveal(ok);nextTurn();o.done()};
+  all.forEach(b=>b.onclick=()=>{
+    if(o.isOk(b)){tries===0?right(o.lv):rightRetry(o.lv);finish(true);return}
+    b.classList.add('no');b.disabled=true;tries++;wrong();
+    if(tries===1){const h=$('ht');if(h)h.disabled=true;$('fb').innerHTML=`<div class="feedback hint"><span><b>Belum tepat.</b> Petunjuk: ${o.hint} Cuba sekali lagi!</span></div>`}
+    else{missed(o.lv);finish(false)}
+  });
+}
+function head(k,i,n){setProg(k,i,n);return `<div class="row spread"><span class="tag">${LV[k].t}</span><span class="muted">Soalan ${i+1} / ${n}</span></div>`}
+function nextBtn(i,n,next,done){const b=$('nx');b.hidden=false;b.textContent=i<n-1?'Seterusnya':'Selesai!';b.focus();b.onclick=()=>{SFX.click();i<n-1?next():done()}}
+function p1(i){
+  const q=P1[i];
+  app.innerHTML=`<section class="screen">${head(0,i,P1.length)}
+   <div class="qbox">${turnLine()}
+    <div class="row spread"><span class="word">${q.w}</span>${soundBtn('snd')}</div>
+    <p><b>${q.q}</b></p>
+    <div class="opts">${q.o.map((o,j)=>`<button class="opt" data-j="${j}" type="button">${o}</button>`).join('')}</div>
+    <div id="fb"></div>
+    <div class="row spread"><button class="btn alt" id="ht" type="button">Petunjuk</button><button class="btn" id="nx" type="button" hidden>Seterusnya</button></div>
+   </div></section>`;
+  $('snd').onclick=()=>speak(q.w);
+  $('ht').onclick=()=>{SFX.pick();$('fb').innerHTML=`<div class="feedback hint">Petunjuk: ${q.h}</div>`;$('ht').disabled=true};
+  mcq({lv:'p1',isOk:x=>+x.dataset.j===q.a,hint:q.h,
+    reveal:ok=>{$('fb').innerHTML=`<div class="feedback ${ok?'ok':'no'}">${ok?'':'Jawapan yang betul ialah '+q.o[q.a]+'. '}${q.why}</div>`;setTimeout(()=>speak(q.w),650)},
+    done:()=>nextBtn(i,P1.length,()=>p1(i+1),()=>levelDone(0))});
+}
+
+/* ================= P2 ================= */
+function toneSvg(type){const t=TONE[type];return `<svg class="tone" viewBox="0 0 520 100" role="img" aria-label="Garis nada ayat ${t.label}">
+ <rect x="2" y="2" width="516" height="96" rx="14" fill="#fff" stroke="#e7dcc6" stroke-width="3"/>
+ <line x1="16" y1="86" x2="504" y2="86" stroke="#e7dcc6" stroke-width="3" stroke-dasharray="6 6"/>
+ <polyline points="${t.pts}" fill="none" stroke="#ff8a1f" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+ <text x="16" y="24" font-family="Nunito,sans-serif" font-size="14" font-weight="900" fill="#5d6e84">GARIS NADA</text></svg>`}
+function p2(i){
+  const q=P2[i];
+  app.innerHTML=`<section class="screen">${head(1,i,P2.length)}
+   <div class="qbox">${turnLine()}
+    <p class="sentence" id="sen">${q.s} <span style="color:#a9b8c9">___</span></p>
+    <div>${soundBtn('snd','Dengar ayat')}</div>
+    <p><b>Ayat ini jenis apa?</b></p>
+    <div class="opts">${['penyata','tanya','seruan'].map(o=>`<button class="opt" data-o="${o}" type="button">${TONE[o].label}</button>`).join('')}</div>
+    <div id="fb"></div>
+    <div class="row spread"><button class="btn alt" id="ht" type="button">Petunjuk</button><button class="btn" id="nx" type="button" hidden>Seterusnya</button></div>
+   </div></section>`;
+  $('snd').onclick=()=>speak(q.s+q.p,q.r);
+  $('ht').onclick=()=>{SFX.pick();$('fb').innerHTML=`<div class="feedback hint">Petunjuk: ${P2H[q.a]}</div>`;$('ht').disabled=true};
+  mcq({lv:'p2',isOk:x=>x.dataset.o===q.a,hint:P2H[q.a],
+    reveal:ok=>{$('sen').innerHTML=`${q.s}<span style="color:var(--rambutan)">${q.p}</span>`;
+      $('fb').innerHTML=`<div class="feedback ${ok?'ok':'no'}"><span>Ini ayat <b>${TONE[q.a].label.toLowerCase()}</b>. ${TONE[q.a].why}</span></div>${toneSvg(q.a)}`;setTimeout(()=>speak(q.s+q.p,q.r),650)},
+    done:()=>nextBtn(i,P2.length,()=>p2(i+1),()=>levelDone(1))});
+}
+
+/* ================= P3 ================= */
+function p3(i){
+  const q=P3[i],w=q.w.split(' ');let sel=-1,done=false;
+  app.innerHTML=`<section class="screen">${head(2,i,P3.length)}
+   <div class="qbox">${turnLine()}
+    <p><b>Klik ruang untuk meletakkan satu tanda jeda ( / ).</b></p>
+    <div class="jeda">${w.map((x,k)=>`<span>${x}</span>${k<w.length-1?`<button class="gap" type="button" data-k="${k}" aria-label="Jeda selepas ${x}"></button>`:''}`).join('')}</div>
+    <div id="fb"></div>
+    <div class="row spread"><button class="btn alt" id="ht" type="button">Petunjuk</button>
+     <div class="row"><button class="btn gold" id="ck" type="button" disabled>Semak</button><button class="btn" id="nx" type="button" hidden>Seterusnya</button></div></div>
+   </div></section>`;
+  $('ht').onclick=()=>{SFX.pick();$('fb').innerHTML=`<div class="feedback hint">Petunjuk: ${q.h}</div>`;$('ht').disabled=true};
+  const gaps=[...app.querySelectorAll('.gap')];
+  let tries=0;
+  gaps.forEach(g=>g.onclick=()=>{if(done||g.disabled)return;SFX.pick();sel=+g.dataset.k;gaps.forEach(x=>{if(x.classList.contains('wrong'))return;x.classList.toggle('on',x===g);x.textContent=x===g?'/':''});$('ck').disabled=false});
+  $('ck').onclick=()=>{
+    const ok=sel===q.k;
+    if(!ok&&tries===0){
+      tries=1;wrong();const g=gaps.find(x=>+x.dataset.k===sel);g.classList.remove('on');g.classList.add('wrong');g.textContent='';g.disabled=true;sel=-1;$('ck').disabled=true;$('ht').disabled=true;
+      $('fb').innerHTML=`<div class="feedback hint"><span><b>Belum tepat.</b> Petunjuk: ${q.h} Cuba sekali lagi!</span></div>`;return}
+    done=true;$('ck').hidden=true;$('ht').disabled=true;
+    gaps.forEach(x=>{const k=+x.dataset.k;x.disabled=true;if(k===q.k){x.classList.remove('on');x.classList.add('right');x.textContent='/'}else if(k===sel)x.classList.add('wrong')});
+    lastEl=app.querySelector('.gap.right');
+    if(ok){tries===0?right('p3'):rightRetry('p3')}else{wrong();missed('p3')}
+    $('fb').innerHTML=`<div class="feedback ${ok?'ok':'no'}"><span>Jeda yang betul ialah selepas perkataan <b>${w[q.k]}</b>. Dengar cara membacanya.</span></div>`;
+    setTimeout(()=>speak(w.slice(0,q.k+1).join(' ')+', '+w.slice(q.k+1).join(' '),'narator'),650);nextTurn();
+    nextBtn(i,P3.length,()=>p3(i+1),()=>levelDone(2));
+  };
+}
+
+/* ================= P4 ================= */
+function p4(){
+  const R=shuffle(Object.values(P4R));let left=null;const done=new Set(),missed=new Set();
+  setProg(3,0,5);
+  app.innerHTML=`<section class="screen"><div class="row spread"><span class="tag">${LV[3].t}</span><span class="muted" id="cnt">0 / 5 dipadankan</span></div>
+   <div class="qbox">${turnLine()}
+    <p><b>Perkataan berima mempunyai bunyi akhir yang sama.</b> Contoh: buah<b>an</b> dan hut<b>an</b>.</p>
+    <div class="rima"><div class="col">${P4L.map(x=>`<button class="rbtn" data-l="${x}" type="button">${x}</button>`).join('')}</div>
+     <div class="col">${R.map(x=>`<button class="rbtn" data-r="${x}" type="button">${x}</button>`).join('')}</div></div>
+    <div id="fb"></div>
+    <div class="row end"><button class="btn" id="nx" type="button" hidden>Selesai!</button></div>
+   </div></section>`;
+  const L=[...app.querySelectorAll('[data-l]')],Rb=[...app.querySelectorAll('[data-r]')];
+  L.forEach(b=>b.onclick=()=>{if(done.has(b.dataset.l))return;SFX.pick();left=b.dataset.l;L.forEach(x=>x.classList.toggle('pick',x===b))});
+  Rb.forEach(b=>b.onclick=()=>{
+    if(b.classList.contains('done'))return;
+    if(!left){$('fb').innerHTML='<div class="feedback hint">Pilih perkataan di sebelah kiri dahulu.</div>';return}
+    const lb=L.find(x=>x.dataset.l===left);
+    if(P4R[left]===b.dataset.r){
+      done.add(left);lb.classList.remove('pick');lb.classList.add('done');b.classList.add('done');lb.disabled=b.disabled=true;
+      if(!missed.has(left))right('p4');else rightRetry('p4');
+      $('fb').innerHTML=`<div class="feedback ok"><span><b>${left}</b> dan <b>${b.dataset.r}</b> berakhir dengan bunyi yang sama.</span></div>`;
+      setTimeout(()=>speak(left+', '+b.dataset.r),500);left=null;
+    }else{
+      missed.add(left);b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),450);wrong();
+      $('fb').innerHTML=`<div class="feedback hint"><span><b>Belum tepat.</b> Petunjuk: cari perkataan yang berakhir dengan bunyi <b>-${RIMA_END[left]}</b>, sama seperti <b>${left}</b>. Cuba sekali lagi!</span></div>`;
+    }
+    nextTurn();$('cnt').textContent=done.size+' / 5 dipadankan';$('bar').style.width=((3+done.size/5)/5*100)+'%';
+    if(done.size===5){$('fb').innerHTML+='<div class="feedback hint" style="margin-top:10px">Perkataan berima menjadikan cerita, pantun dan syair sedap didengar.</div>';const n=$('nx');n.hidden=false;n.focus();n.onclick=()=>{SFX.click();levelDone(3)}}
+  });
+}
+
+/* ================= P5 ================= */
+function p5(){
+  let order;do{order=shuffle([0,1,2,3,4,5])}while(order.every((v,i)=>v===i));
+  let sel=null,checked=false,drag=null;
+  setProg(4,0,4);
+  app.innerHTML=`<section class="screen"><div class="row spread"><span class="tag">${LV[4].t} · Bahagian A</span></div>
+   ${turnLine()}
+   <p><b>Susun kad mengikut turutan cerita.</b> Klik satu kad, kemudian klik kad lain untuk menukar tempat.</p>
+   <div class="susun" id="grid"></div><div id="fb"></div>
+   <div class="row end" id="acts"><button class="btn gold" id="ck" type="button">Semak Susunan</button><button class="btn" id="nx" type="button" hidden>Bahagian B</button></div></section>`;
+  const draw=()=>{
+    $('grid').innerHTML=order.map((c,p)=>`<button class="kad ${sel===p?'pick':''} ${checked?(c===p?'right':'wrong'):''}" type="button" draggable="${!checked}" data-p="${p}">
+      <span class="no">${p+1}</span>${scene(c+1,STORY[c].cap)}<p>${STORY[c].cap}</p></button>`).join('');
+    $('grid').querySelectorAll('.kad').forEach(k=>{
+      const p=+k.dataset.p;
+      k.onclick=()=>{if(checked)return;if(sel===null){sel=p;SFX.pick()}else{if(sel!==p){[order[sel],order[p]]=[order[p],order[sel]];SFX.jump()}sel=null}draw()};
+      k.ondragstart=e=>{drag=p;try{e.dataTransfer.setData('text/plain',String(p))}catch(_){}};
+      k.ondragover=e=>{if(!checked){e.preventDefault();k.classList.add('over')}};
+      k.ondragleave=()=>k.classList.remove('over');
+      k.ondrop=e=>{e.preventDefault();if(drag!==null&&drag!==p){[order[drag],order[p]]=[order[p],order[drag]];SFX.jump()}drag=null;sel=null;draw()};
+    });
+  };
+  draw();
+  let scored=false;
+  const HINT5='Petunjuk: cerita bermula apabila Sang Kancil ternampak pokok rambutan, dan berakhir apabila Sang Kancil sampai di seberang.';
+  $('ck').onclick=()=>{
+    checked=true;sel=null;const n=order.filter((c,i)=>c===i).length;draw();
+    lastEl=$('ck');$('ck').hidden=true;
+    if(scored){ // cubaan latihan: tiada rambutan tambahan
+      if(n===6){SFX.ok();sparkle(lastEl);say('kancil','Betul! Sekarang cerita sudah tersusun.')}else SFX.pick();
+      $('fb').innerHTML=`<div class="feedback ${n===6?'ok':'hint'}"><span>${n} daripada 6 kad di tempat yang betul (cubaan latihan, tiada rambutan tambahan).${n<6?' '+HINT5:''}</span></div>`;
+      const r=$('retry5');if(r)r.hidden=n===6;return}
+    scored=true;
+    for(let i=0;i<n;i++)setTimeout(()=>right('p5',n===6?'Sempurna! Cerita tersusun dengan betul!':`${n} kad di tempat yang betul. Dapat ${n} biji rambutan!`),i*180);
+    if(n<6)setTimeout(()=>{S.rec.p5.n+=6-n;if(n===0)wrong('Hehe, tiada kad yang betul!');else{S.streak=0;S.rec.p5.wa++;hud();SFX.no();snapCroc(5)}},n*180+100);
+    $('fb').innerHTML=`<div class="feedback ${n===6?'ok':'hint'}"><span>${n} daripada 6 kad berada di tempat yang betul. Kad hijau sudah betul.${n<6?' '+HINT5:''}</span></div>`;
+    nextTurn();const nx=$('nx');nx.hidden=false;$('bar').style.width=((4+1/4)/5*100)+'%';
+    if(n<6){
+      const r=document.createElement('button');r.className='btn gold';r.type='button';r.id='retry5';r.textContent='Cuba Susun Semula';
+      r.onclick=()=>{SFX.click();checked=false;draw();r.hidden=true;$('ck').hidden=false;$('ck').textContent='Semak Semula'};
+      const s=document.createElement('button');s.className='btn alt';s.type='button';s.textContent='Tunjuk susunan betul';
+      s.onclick=()=>{order=[0,1,2,3,4,5];checked=true;draw();s.remove();r.remove();$('ck').hidden=true};
+      nx.before(r);nx.before(s)}
+    nx.onclick=()=>{SFX.click();p5b(0)};
+  };
+}
+function p5b(i){
+  if(i>=P5B.length)return levelDone(4);
+  const q=P5B[i];setProg(4,i+1,4);
+  app.innerHTML=`<section class="screen"><div class="row spread"><span class="tag">${LV[4].t} · Bahagian B</span><span class="muted">Soalan ${i+1} / ${P5B.length}</span></div>
+   <div class="qbox">${turnLine()}<p class="sentence">${q.q}</p>
+    <div class="opts">${q.o.map((o,j)=>`<button class="opt" data-j="${j}" type="button" style="font-size:1.15rem">${o}</button>`).join('')}</div>
+    <div id="fb"></div><div class="row end"><button class="btn" id="nx" type="button" hidden>Seterusnya</button></div></div></section>`;
+  mcq({lv:'p5',isOk:x=>+x.dataset.j===q.a,hint:q.h,
+    reveal:ok=>{$('fb').innerHTML=`<div class="feedback ${ok?'ok':'no'}">${ok?'':'Jawapan yang betul ialah: '+q.o[q.a]+'. '}${q.why}</div>`},
+    done:()=>{const n=$('nx');n.hidden=false;n.focus();n.onclick=()=>{SFX.click();p5b(i+1)}}});
+}
+function discuss(){
+  setExpr('think');const e=$('kci');if(e)e.classList.remove('dance');
+  say('kancil','Hmm... aku menipu buaya. Adakah perbuatan aku itu wajar?');
+  app.innerHTML=`<section class="screen">
+   <div class="discuss"><span class="tag">Masa Berbincang</span><h2 style="margin-top:10px">Sang Kancil bijak, tetapi adakah wajar dia menipu?</h2>
+   <p style="margin-top:10px">Bincangkan dalam kumpulan atau bersama kelas. Tiada jawapan betul atau salah. Berikan sebab untuk pendapat kamu.</p>
+   <ul class="clean" style="margin-top:10px"><li>Apakah cara lain Sang Kancil boleh menyeberang sungai?</li><li>Bagaimanakah perasaan Sang Buaya selepas ditipu?</li></ul></div>
+   <div class="row end"><button class="btn big red" id="nx" type="button">Lihat Keputusan</button></div></section>`;
+  $('nx').onclick=()=>{SFX.click();result()};
+}
+
+/* ================= KEPUTUSAN ================= */
+function stars(got,max){const r=got/max,n=r===1?3:r>=.6?2:1;return '★'.repeat(n)+`<span class="off">${'★'.repeat(3-n)}</span>`}
+function starN(got,max){const r=got/max;return r===1?3:r>=.6?2:1}
+function result(){
+  SFX.win();confetti(160);const tot=total();setExpr('happy');const ke=$('kci');if(ke)ke.classList.add('dance');
+  clearSave();giveBadge('tamat');if(tot===30)giveBadge('sempurna');
+  const R=S.rec,ans=LV.reduce((a,l)=>a+R[l.k].n,0),cor=LV.reduce((a,l)=>a+R[l.k].ok,0),wa=LV.reduce((a,l)=>a+R[l.k].wa,0),acc=ans?Math.round(cor/ans*100):0;
+  const weak=LV.filter(l=>R[l.k].ok<R[l.k].n);
+  const report=`<div class="qbox"><h3>Laporan Prestasi</h3>
+    <div class="statgrid">
+     <div class="stat"><div class="n">${ans}</div><div class="t">Soalan dijawab</div></div>
+     <div class="stat"><div class="n" style="color:var(--ok)">${cor}</div><div class="t">Betul pada cubaan pertama</div></div>
+     <div class="stat"><div class="n" style="color:var(--no)">${ans-cor}</div><div class="t">Tidak betul pada cubaan pertama</div></div>
+     <div class="stat"><div class="n">${acc}%</div><div class="t">Ketepatan</div></div>
+     <div class="stat"><div class="n">${tot}<span style="font-size:.5em"> / 30</span></div><div class="t">Markah (rambutan)</div></div>
+     <div class="stat"><div class="n">${S.best}</div><div class="t">Betul berturut-turut paling panjang</div></div>
+    </div>
+    <div class="tablewrap"><table class="rtable"><tr><th>Peringkat</th><th>Betul</th><th>Ketepatan</th><th>Bintang</th></tr>
+     ${LV.map(l=>{const r=R[l.k],p=r.n?Math.round(r.ok/r.n*100):0;return `<tr><td>${l.t}</td><td class="num">${r.ok} / ${r.n}</td><td><div class="row" style="gap:8px;flex-wrap:nowrap"><div class="meter" style="flex:1"><span style="width:${p}%"></span></div><span class="num" style="font-variant-numeric:tabular-nums">${p}%</span></div></td><td class="num" style="color:#e0a800;font-weight:900">${'★'.repeat(starN(S.score[l.k],l.m))}${'☆'.repeat(3-starN(S.score[l.k],l.m))}</td></tr>`}).join('')}
+    </table></div>
+    <p class="muted" style="font-size:.9rem;font-weight:700">Jumlah cubaan yang salah (termasuk cubaan kedua): ${wa}. Markah hanya diberi untuk jawapan betul pada cubaan pertama.</p>
+    <h3>Cadangan penambahbaikan</h3>
+    ${weak.length?`<ul class="clean">${weak.map(l=>`<li><b>${l.t}:</b> ${SUG[l.k]}</li>`).join('')}</ul>`:'<p>Prestasi cemerlang dalam semua peringkat! Cabar diri kamu dengan bercerita di hadapan kelas menggunakan sebutan, intonasi dan jeda yang betul.</p>'}
+   </div>
+   <div class="qbox"><h3>Lencana (${S.badges.length} / ${BADGES.length})</h3>
+    <div class="badges">${BADGES.map(b=>`<div class="badge ${S.badges.includes(b.id)?'':'lock'}">${badgeArt(b)}<b>${b.n}</b><span class="muted">${b.d}</span></div>`).join('')}</div></div>`;
+  say('kancil',tot>=24?'Wah! Bakul aku penuh dengan rambutan. Kamu memang hebat!':tot>=15?'Sedapnya rambutan ini! Terima kasih, kawan-kawan!':'Terima kasih! Mari main sekali lagi untuk kumpul lebih banyak rambutan.');
+  let grp='';
+  if(S.mode==='kumpulan'){const top=Math.max(...S.groups.map(g=>g.score));const w=S.groups.filter(g=>g.score===top).map(g=>g.name);
+    grp=`<div class="qbox"><h3>Papan Markah Kumpulan</h3>${[...S.groups].sort((a,b)=>b.score-a.score).map(g=>`<div class="row spread"><b>${g.score===top?'🏆 ':''}${g.name}</b><span class="pill ${g.score===top?'now':''}">${ICON_R}${g.score}</span></div>`).join('')}
+    <p style="font-family:var(--display);font-size:1.4rem;font-weight:800">Juara: ${w.join(' & ')}</p></div>`}
+  app.innerHTML=`<section class="screen">
+   <div class="trophy">${trophyArt()}<div><span class="eyebrow">Tahniah! · Rambutan dikumpul</span><div class="total">${tot}<span style="font-size:.45em;color:var(--muted);-webkit-text-stroke:0;text-shadow:none"> / 30</span></div></div></div>
+   <div class="medals">${LV.map((l,i)=>`<div class="medal" style="animation-delay:${i*.12}s">${medalArt(starN(S.score[l.k],l.m))}<div class="st">${stars(S.score[l.k],l.m)}</div><b>${l.t}</b><div class="muted" style="font-variant-numeric:tabular-nums">${S.score[l.k]} / ${l.m}</div></div>`).join('')}</div>
+   ${report}
+   ${grp}
+   <div class="qbox"><h3>Nilai murni</h3><ul class="clean"><li>Bijaksana dan berfikiran kreatif ketika menghadapi masalah</li><li>Tidak mudah percaya kepada kata-kata orang lain</li><li>Jujur dalam tindakan</li></ul></div>
+   <div class="discuss"><h2>Sekarang, giliran kamu bercerita!</h2>
+    <ul class="clean" style="margin-top:10px"><li><b>Sebutan:</b> sebut setiap perkataan dengan jelas.</li><li><b>Intonasi:</b> ubah nada mengikut jenis ayat.</li><li><b>Jeda:</b> berhenti seketika di tempat yang sesuai.</li></ul></div>
+   <div class="row spread"><button class="btn alt" id="hm" type="button">${IC.home}Menu Utama</button><button class="btn big" id="ag" type="button">${IC.play}Main Semula</button></div>
+  </section>`;
+  $('hm').onclick=()=>{SFX.click();reset();home()};$('ag').onclick=()=>{SFX.click();reset();story(0)};
+}
+
+/* ================= PANDUAN GURU ================= */
+function guide(){
+  view({});
+  app.innerHTML=`<section class="screen guide">
+   <span class="eyebrow">Panduan Guru</span><h2>Pengembaraan Sang Kancil: Misi Seberang Sungai</h2>
+   <div class="tablewrap"><table>
+    <tr><th>Tahun</th><td>Tahun 4</td></tr>
+    <tr><th>Standard Kandungan</th><td>1.3 Bercerita, dan menceritakan perkara yang didengar, ditonton dan dibaca dengan sebutan dan intonasi yang betul.</td></tr>
+    <tr><th>Standard Pembelajaran</th><td>1.3.1 Bercerita dengan sebutan dan intonasi yang sesuai.</td></tr>
+    <tr><th>Fungsi BBM</th><td>Latihan persediaan sebutan, intonasi, jeda dan rima sebelum murid bercerita di hadapan kelas.</td></tr>
+    <tr><th>Tempoh</th><td>20 hingga 25 minit</td></tr></table></div>
+   <h3>Objektif</h3><p>Pada akhir permainan, murid dapat:</p>
+   <ul class="clean"><li>memilih sebutan dan bentuk baku yang betul bagi perkataan dalam cerita;</li><li>mengenal pasti intonasi ayat penyata, tanya dan seruan;</li><li>meletakkan jeda yang betul dalam ayat;</li><li>memadankan perkataan yang berima;</li><li>menyusun turutan cerita dan menyatakan pengajarannya.</li></ul>
+   <h3>Cara bermain</h3>
+   <p>Sang Kancil perlu melompat di atas lima ekor buaya untuk sampai ke pokok rambutan. Setiap buaya ialah satu peringkat. Jawapan betul memberi sebiji rambutan; jawapan salah membuat buaya cuba menangkap Kancil. Jumlah: 30 biji rambutan.</p>
+   <ul class="clean">
+    <li><b>Peta pengembaraan:</b> menunjukkan peringkat yang selesai, sedang dimainkan dan belum dibuka. Peringkat seterusnya dibuka selepas peringkat semasa selesai.</li>
+    <li><b>Cubaan kedua:</b> jika jawapan pertama salah, murid mendapat petunjuk dan boleh mencuba sekali lagi. Rambutan hanya diberi untuk jawapan betul pada cubaan pertama, jadi markah tidak berubah daripada sistem asal.</li>
+    <li><b>Lencana:</b> diberi untuk jawapan betul berturut-turut (3, 5, 10), markah penuh dalam sesuatu peringkat, dan menamatkan permainan. Lencana tidak menambah markah.</li>
+    <li><b>Laporan prestasi:</b> dipaparkan di akhir permainan, dikira daripada jawapan sebenar murid.</li>
+    <li><b>Simpan kemajuan:</b> kemajuan disimpan secara automatik pada peranti dan pelayar yang sama di peta pengembaraan. Jika permainan ditutup di tengah peringkat, permainan disambung dari awal peringkat itu. Kemajuan tidak dapat dipindahkan ke peranti lain.</li>
+   </ul>
+   <div class="tablewrap"><table><tr><th>Buaya</th><th>Peringkat</th><th>Fokus</th><th>Rambutan</th></tr>
+    <tr><td>1</td><td>Dengar &amp; Sebut</td><td>Fonetik: diftong, konsonan akhir, suku kata, bentuk baku</td><td>6</td></tr>
+    <tr><td>2</td><td>Teka Intonasi</td><td>Fonologi: intonasi ayat penyata, tanya, seruan</td><td>6</td></tr>
+    <tr><td>3</td><td>Letak Jeda</td><td>Fonologi: jeda dalam ayat</td><td>4</td></tr>
+    <tr><td>4</td><td>Padankan Rima</td><td>Fonologi dan sastera: bunyi akhir perkataan</td><td>5</td></tr>
+    <tr><td>5</td><td>Susun Cerita</td><td>Sastera: turutan plot, watak, latar, pengajaran</td><td>9</td></tr></table></div>
+   <h3>Cadangan aliran PdP</h3>
+   <ul class="clean"><li><b>Set induksi:</b> tayangkan video cerita Sang Kancil dan Buaya.</li><li><b>Aktiviti:</b> mainkan permainan ini dalam Mod Kelas atau Mod Kumpulan.</li><li><b>Pengukuhan:</b> murid bercerita di hadapan kelas; guru menilai sebutan, intonasi dan kelancaran dengan senarai semak.</li></ul>
+   <h3>Bunyi dan suara</h3>
+   <ul class="clean"><li>Tekan <b>Tetapan</b> untuk menghidupkan atau mematikan kesan bunyi, muzik latar dan dialog watak.</li><li>Untuk suara Bahasa Melayu yang lebih semula jadi, buka permainan dalam <b>Microsoft Edge</b> dan pilih suara Yasmin atau Osman (Natural).</li><li>Permainan ini tidak menggunakan mikrofon dan tidak menyimpan data murid.</li></ul>
+   <h3>Video cadangan untuk set induksi</h3>
+   <ul class="clean">
+    <li>Les' Copaque Production. <i>Pada Zaman Dahulu: Sang Kancil Mengira Buaya</i> (Bahagian 1): <a href="https://www.youtube.com/watch?v=hqpm_A_-YdU" target="_blank" rel="noopener">youtube.com/watch?v=hqpm_A_-YdU</a></li>
+    <li>Bahagian 2: <a href="https://www.youtube.com/watch?v=6TtRURzwxz8" target="_blank" rel="noopener">youtube.com/watch?v=6TtRURzwxz8</a></li>
+    <li>Versi berirama (rujukan rima): <a href="https://youtu.be/LdTC8DekrT4" target="_blank" rel="noopener">youtu.be/LdTC8DekrT4</a></li></ul>
+   <h3>Kredit</h3>
+   <p>Dibangunkan oleh Muhamad Aiman Ibtisam bin Azlan (PISMP, IPG Kampus Kota Bharu) untuk kursus BMMB6033. Teks cerita ditulis semula daripada cerita rakyat Melayu. Ilustrasi, muzik dan kesan bunyi dijana dalam kod. Video kekal milik pemilik asalnya.</p>
+   <div><button class="btn" id="bk" type="button">${IC.home}Kembali</button></div></section>`;
+  $('bk').onclick=()=>{SFX.click();home()};
+}
+
+/* ================= MENU ================= */
+const MENU_HTML=IC.home+'<span class="lbl">Menu</span>';
+$('btnMenu').innerHTML=MENU_HTML;
+$('btnMenu').onclick=()=>{const b=$('btnMenu');
+  if(b.dataset.c){delete b.dataset.c;b.innerHTML=MENU_HTML;document.querySelectorAll('.modal').forEach(m=>m.remove());reset();home();return}
+  b.dataset.c='1';b.textContent='Tekan lagi untuk keluar';setTimeout(()=>{delete b.dataset.c;b.innerHTML=MENU_HTML},3000)};
+home();
+</script>
+
+</body></html>
